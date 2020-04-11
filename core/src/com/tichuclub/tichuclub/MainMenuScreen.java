@@ -4,11 +4,14 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -24,8 +27,11 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TiledDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.graphics.GL20;
+
+import static com.badlogic.gdx.graphics.Texture.TextureWrap.Repeat;
 
 public class MainMenuScreen implements Screen {
 
@@ -35,7 +41,9 @@ public class MainMenuScreen implements Screen {
     private Stage stage;
     private String skinFile = "uiskin.json";
     private String backgroundAsset = "redback.png";
-    private String middleBackgroundAsset = "blueback.png";
+    private String middleBackgroundAsset = "whiteback.png";
+    private String dragon = "dragon.png";
+    private String bars = "bars.png";
     private Game game;
 
     public MainMenuScreen(Game game) {
@@ -52,18 +60,24 @@ public class MainMenuScreen implements Screen {
 
         Skin skin = assetManager.get(skinFile);
         rootTable.setSkin(skin);
+        FreeTypeFontGenerator ffgenerator = new FreeTypeFontGenerator(Gdx.files.internal("truetypefont/Brewers Bold Lhf.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 40;
+        parameter.color = Color.WHITE;
+        BitmapFont font = ffgenerator.generateFont(parameter);
+        ffgenerator.dispose();
+
         Texture rootBackground = new Texture(Gdx.files.internal(backgroundAsset));
         TiledDrawable tiler = new TiledDrawable(new TextureRegion(rootBackground, 0, 0, 250, 250));
 
         rootTable.setBackground(tiler);
-        rootTable.setDebug(true);
 
         //Declare middle Table
         Texture middleBackground = new Texture(Gdx.files.internal(middleBackgroundAsset));
         TiledDrawable middleTile = new TiledDrawable(new TextureRegion(middleBackground, 0, 0, 250, 250));
 
         Table middleTable = new Table();
-        middleTable.setBackground(middleTile);
+        skin.get(TextButton.TextButtonStyle.class).font = font;
         TextButton playTichu = new TextButton("New Game", skin);
 
         playTichu.addListener(new ClickListener() {
@@ -93,20 +107,47 @@ public class MainMenuScreen implements Screen {
             }
         } );
 
-        middleTable.add(playTichu).width(400).height(100).padLeft(100).padRight(100).padBottom(25);
-        middleTable.row();
-        if(gameExists) {
-            middleTable.add(continueGame).width(400).height(100).padLeft(100).padRight(100).padBottom(25);
-            middleTable.row();
-        }
-        middleTable.add(quit).width(400).height(100).padLeft(100).padRight(100).padBottom(25);
+        float width = stage.getWidth()/2.25f;
+        float height = stage.getHeight()/10;
+        float leftPad = (float) 0.15 * width;
+        float rightPad = (float) 0.15 * width;
+        float bottomPad = (float) 0.45 * height;
 
-        rootTable.add(middleTable).align(Align.center).expand().center().fillY();
+        Image dragonImage = new Image(new Texture(dragon));
+        dragonImage.setScaling(Scaling.fit);
+
+        Image logo = new Image(new Texture("logo.png"));
+        logo.setScaling(Scaling.fit);
+        middleTable.add(logo).width(width).padLeft(leftPad).padRight(rightPad).padBottom(bottomPad);
+        middleTable.row();
+        middleTable.add(playTichu).width(width).height(height).padLeft(leftPad).padRight(rightPad).padBottom(bottomPad);
+        middleTable.row();
+
+        if(!gameExists) {
+            continueGame.setDisabled(true);
+            continueGame.setTouchable(Touchable.disabled);
+            continueGame.getLabel().setColor(Color.DARK_GRAY);
+        }
+
+        middleTable.add(continueGame).width(width).height(height).padLeft(leftPad).padRight(rightPad).padBottom(bottomPad);
+        middleTable.row();
+
+        middleTable.add(quit).width(width).height(height).padLeft(leftPad).padRight(rightPad).padBottom(bottomPad);
+
+        Image topBar = new Image(new Texture(bars));
+
+        Image bottomBar = new Image(new Texture(bars));
+
+        rootTable.add(topBar).colspan(2).expandX().fillX();
+        rootTable.row();
+        rootTable.add(dragonImage).expandY().fillY().padRight(20).padTop(20).padBottom(20);
+        rootTable.add(middleTable).align(Align.center).expandY().fillY().padTop(20).padBottom(20);
+        rootTable.row();
+        rootTable.add(bottomBar).colspan(2).expandX().fillX();
 
         stage.addActor(rootTable);
 
         Gdx.input.setInputProcessor(stage);
-
 
     }
 

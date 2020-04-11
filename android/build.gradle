@@ -1,9 +1,13 @@
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
 android {
     signingConfigs {
         debug {
-            storeFile file('/home/brandon/.android/debug.keystore')
-            keyPassword 'rincewind'
-            storePassword 'rincewind'
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
         }
     }
     buildToolsVersion "28.0.3"
