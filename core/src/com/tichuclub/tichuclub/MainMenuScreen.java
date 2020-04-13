@@ -90,8 +90,6 @@ public class MainMenuScreen implements Screen {
         //TODO: continueGame logic
         TextButton continueGame = new TextButton("Continue", skin);
 
-        boolean gameExists = false;
-
         continueGame.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -123,7 +121,7 @@ public class MainMenuScreen implements Screen {
         middleTable.add(playTichu).width(width).height(height).padLeft(leftPad).padRight(rightPad).padBottom(bottomPad);
         middleTable.row();
 
-        if(!gameExists) {
+        if(!((TichuClub) game).isGameStarted()) {
             continueGame.setDisabled(true);
             continueGame.setTouchable(Touchable.disabled);
             continueGame.getLabel().setColor(Color.DARK_GRAY);
