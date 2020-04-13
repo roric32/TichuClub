@@ -7,37 +7,25 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TiledDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.graphics.GL20;
-
-import static com.badlogic.gdx.graphics.Texture.TextureWrap.Repeat;
 
 public class MainMenuScreen implements Screen {
 
-    private SpriteBatch batch;
-    private Texture texture;
-    private OrthographicCamera camera;
     private Stage stage;
     private String skinFile = "uiskin.json";
     private String backgroundAsset = "redback.png";
@@ -121,7 +109,7 @@ public class MainMenuScreen implements Screen {
         middleTable.add(playTichu).width(width).height(height).padLeft(leftPad).padRight(rightPad).padBottom(bottomPad);
         middleTable.row();
 
-        if(!((TichuClub) game).isGameStarted()) {
+        if(!((TichuClub) this.game).isGameStarted()) {
             continueGame.setDisabled(true);
             continueGame.setTouchable(Touchable.disabled);
             continueGame.getLabel().setColor(Color.DARK_GRAY);
@@ -175,8 +163,6 @@ public class MainMenuScreen implements Screen {
     }
 
     public void dispose() {
-        batch.dispose();
         stage.dispose();
-        texture.dispose();
     }
 }
