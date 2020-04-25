@@ -69,15 +69,23 @@ class Deck(preShuffle: Boolean = false, atlas: TextureAtlas) {
 
         var cardMovesCompleted = 0
 
-        while(cards.count() > 24) {
-            var x = 0f
-            var y = 0f
-            var duration = 1f
+        for(player in playerArray) {
+            while(player.hand.size < 8) {
+                player.hand.add(cards.first())
+                cards.removeAt(0)
+                player.hand.sortBy{it.value}
+            }
+        }
 
-            for(player in playerArray) {
+        for(player in playerArray) {
 
-                val card : Card = cards.first()
-                player.hand.add(card)
+            var z = 0
+
+            for(card: Card in player.hand) {
+
+                var x = 0f
+                var y = 0f
+                var duration = 1f
 
                 card.setSize(tichu.CARD_WIDTH, tichu.CARD_HEIGHT)
 
@@ -99,33 +107,24 @@ class Deck(preShuffle: Boolean = false, atlas: TextureAtlas) {
                         y = 0f
                         duration = 0.8f
                         tally += tichu.FANNED_CARD_WIDTH
+                        card.zIndex = z++
                     }
                 }
 
                 val moveAction = MoveToAction()
                 moveAction.setPosition(x, y)
                 moveAction.duration = duration
-                /*
-                card.width = card.currentSide.width
-                card.height = card.currentSide.height
-                card.currentSide.setBounds(card.x, card.y, card.width, card.height)
-                var rotateAction = RotateByAction()
-                rotateAction.amount = 90f
-                card.addAction(rotateAction)
 
-                 */
                 val actionChain = SequenceAction(moveAction, (object : RunnableAction() {
                     override fun run() {
                         cardMovesCompleted++
                         if(cardMovesCompleted == 24) {
-                            
+
                             tichu.state.act()
                         }
                     }
                 }))
                 card.addAction(actionChain)
-
-                cards.removeAt(0)
 
             }
 
