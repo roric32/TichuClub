@@ -11,14 +11,14 @@ class StateGrandCheck(tichu: TichuGame) : TichuState(tichu) {
     }
 
     override fun act() {
-        var x = 0
-        var y = 0
 
         val playerHand = tichu.players.getCharacterFromPosition(Position.SOUTH).hand
 
-        for (card in playerHand.sortedBy{it.value}) {
+        for (card in playerHand) {
             card.flip()
         }
+
+
 
     }
 

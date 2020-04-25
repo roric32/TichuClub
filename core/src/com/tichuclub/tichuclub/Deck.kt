@@ -69,11 +69,12 @@ class Deck(preShuffle: Boolean = false, atlas: TextureAtlas) {
 
         var cardMovesCompleted = 0
 
-        for(player in playerArray) {
-            while(player.hand.size < 8) {
+        //Each player is dealt 8 cards and then each must decide whether or not to call Grand Tichu.
+        while(cards.size > 24) {
+            for (player in playerArray) {
                 player.hand.add(cards.first())
                 cards.removeAt(0)
-                player.hand.sortBy{it.value}
+                player.hand.sortBy { it.value }
             }
         }
 
