@@ -1,3 +1,5 @@
+package com.tichuclub.tichuclub
+
 class EventDispatcher(private var listeners: ArrayList<TichuEventListener>) {
 
     fun addListener(listener: TichuEventListener) {

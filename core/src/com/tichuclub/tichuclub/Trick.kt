@@ -1,3 +1,5 @@
+package com.tichuclub.tichuclub
+
 class Trick {
 
     lateinit var type: Combination

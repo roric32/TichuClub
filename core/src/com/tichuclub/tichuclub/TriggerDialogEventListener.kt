@@ -1,6 +1,8 @@
+package com.tichuclub.tichuclub
+
 import java.util.*
 
-class TriggerDialogEventListener(override val event: TichuEvent, override val game: Game) : TichuEventListener {
+class TriggerDialogEventListener(override val event: TichuEvent, override val game: TichuGame) : TichuEventListener {
 
     override fun respond() {
 

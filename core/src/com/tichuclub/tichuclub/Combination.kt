@@ -1,3 +1,5 @@
+package com.tichuclub.tichuclub
+
 enum class Combination {
     SINGLETON,
     PAIR,

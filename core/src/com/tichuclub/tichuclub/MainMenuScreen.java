@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -22,20 +23,23 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TiledDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class MainMenuScreen implements Screen {
 
+    private boolean debug = false;
     private Stage stage;
     private String skinFile = "uiskin.json";
     private String backgroundAsset = "redback.png";
     private String middleBackgroundAsset = "whiteback.png";
     private String dragon = "dragon.png";
     private String bars = "bars.png";
-    private Game game;
+    private final Game currentGame;
 
     public MainMenuScreen(Game game) {
-        this.game = game;
+        this.currentGame = game;
         stage = new Stage(new ScreenViewport());
 
         AssetManager assetManager = new AssetManager();
@@ -71,17 +75,16 @@ public class MainMenuScreen implements Screen {
         playTichu.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                ((Game)Gdx.app.getApplicationListener()).setScreen(ScreenOverlord.get(ScreenEnum.GAME));
+                currentGame.setScreen(ScreenOverlord.get(ScreenEnum.GAME));
             }
         });
 
-        //TODO: continueGame logic
         TextButton continueGame = new TextButton("Continue", skin);
 
         continueGame.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                ((Game)Gdx.app.getApplicationListener()).setScreen(ScreenOverlord.get(ScreenEnum.GAME));
+                currentGame.setScreen(ScreenOverlord.get(ScreenEnum.GAME));
             }
         });
 
@@ -109,7 +112,7 @@ public class MainMenuScreen implements Screen {
         middleTable.add(playTichu).width(width).height(height).padLeft(leftPad).padRight(rightPad).padBottom(bottomPad);
         middleTable.row();
 
-        if(!((TichuClub) this.game).isGameStarted()) {
+        if(!((TichuClub) this.currentGame).isGameStarted()) {
             continueGame.setDisabled(true);
             continueGame.setTouchable(Touchable.disabled);
             continueGame.getLabel().setColor(Color.DARK_GRAY);
@@ -131,6 +134,11 @@ public class MainMenuScreen implements Screen {
         rootTable.row();
         rootTable.add(bottomBar).colspan(2).expandX().fillX();
 
+        if(debug) {
+            rootTable.setDebug(true);
+            middleTable.setDebug(true);
+        }
+
         stage.addActor(rootTable);
 
         Gdx.input.setInputProcessor(stage);
@@ -138,7 +146,7 @@ public class MainMenuScreen implements Screen {
     }
 
     public void show() {
-
+        Gdx.input.setInputProcessor(this.stage);
     }
 
     public void render(float delta) {
@@ -155,14 +163,16 @@ public class MainMenuScreen implements Screen {
     }
 
     public void resume() {
-
+        Gdx.input.setInputProcessor(this.stage);
     }
 
     public void hide() {
-
+        this.dispose();
     }
 
     public void dispose() {
-        stage.dispose();
+        Gdx.gl.glClearColor( 0, 0, 0, 1 );
+        Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
+        this.stage.dispose();
     }
 }

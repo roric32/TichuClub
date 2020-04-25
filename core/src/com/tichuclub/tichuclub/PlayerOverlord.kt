@@ -1,31 +1,46 @@
-class PlayerOverlord(private var north : Character,
-                     private var east : Character,
-                     private var south : Character,
-                     private var west : Character) {
+package com.tichuclub.tichuclub
+
+class PlayerOverlord {
 
     private val playersOut = ArrayList<Character>()
+    lateinit var north : Character
+    lateinit var east : Character
+    lateinit var south : Character
+    lateinit var west : Character
     lateinit var lastTrickWinner : Character
 
-    init {
-        north.position = Position.NORTH
-        north.partner = Position.SOUTH
-        north.leftOpponent = Position.EAST
-        north.rightOpponent = Position.WEST
+    fun addPlayer(position: Position, character: Character) {
+        when(position) {
+            Position.NORTH -> {
+                north = character
+                north.position = position
+                north.partner = Position.SOUTH
+                north.leftOpponent = Position.EAST
+                north.rightOpponent = Position.WEST
+            }
+            Position.EAST -> {
+                east = character
+                east.position = position
+                east.partner = Position.WEST
+                east.leftOpponent = Position.SOUTH
+                east.rightOpponent = Position.EAST
+            }
+            Position.SOUTH -> {
+                south = character
+                south.position = position
+                south.partner = Position.NORTH
+                south.leftOpponent = Position.WEST
+                south.rightOpponent = Position.EAST
+            }
+            Position.WEST -> {
+                west = character
+                west.position = position
+                west.partner = Position.EAST
+                west.leftOpponent = Position.NORTH
+                west.rightOpponent = Position.SOUTH
+            }
+        }
 
-        east.position = Position.EAST
-        east.partner = Position.WEST
-        east.leftOpponent = Position.SOUTH
-        east.rightOpponent = Position.NORTH
-
-        south.position = Position.SOUTH
-        south.partner = Position.NORTH
-        south.leftOpponent = Position.WEST
-        south.rightOpponent = Position.EAST
-
-        west.position = Position.WEST
-        west.partner = Position.EAST
-        west.leftOpponent = Position.NORTH
-        west.rightOpponent = Position.SOUTH
     }
 
     fun getCharactersAsList() : List<Character> {

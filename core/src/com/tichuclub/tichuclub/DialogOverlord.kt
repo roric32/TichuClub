@@ -1,3 +1,5 @@
+package com.tichuclub.tichuclub
+
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.squareup.moshi.Moshi
 import java.io.File

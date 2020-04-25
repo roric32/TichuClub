@@ -1,3 +1,8 @@
+package com.tichuclub.tichuclub
+
+import com.tichuclub.tichuclub.CardCombination as CardCombination
+import com.tichuclub.tichuclub.Card as Card
+
 class CardAnalysis {
 
     private var singletons = ArrayList<CardCombination>()
@@ -62,7 +67,7 @@ class CardAnalysis {
 
     }
 
-    fun contains(combinationType: Combination, cards: List<Card>) : Boolean {
+    fun contains(combinationType: Combination, cards: List<com.tichuclub.tichuclub.Card>) : Boolean {
 
         var ret = false
 

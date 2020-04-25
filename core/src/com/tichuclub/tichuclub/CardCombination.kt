@@ -1,3 +1,7 @@
+package com.tichuclub.tichuclub
+
+import com.tichuclub.tichuclub.Card as Card
+
 data class CardCombination(
     val type: Combination,
     val cards: List<Card>

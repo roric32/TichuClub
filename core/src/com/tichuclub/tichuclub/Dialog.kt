@@ -1,3 +1,5 @@
+package com.tichuclub.tichuclub
+
 data class Dialogs(
     val dialogs: List<Dialog> = listOf<Dialog>()
 )

@@ -1,4 +1,8 @@
-abstract class Character(open var name : String) {
+package com.tichuclub.tichuclub
+
+import com.tichuclub.tichuclub.CardCombination as CardCombination
+
+abstract class Character(open var name : String, open var game: TichuGame) {
 
     lateinit var position: Position
     lateinit var partner: Position
@@ -43,7 +47,7 @@ abstract class Character(open var name : String) {
     }
 
     fun getValidCombinations(type: Combination?, lastValue: Int?) : List<CardCombination> {
-        val ca = CardAnalyzer()
+        val ca = CardAnalyzer(game.deck)
         return if(type == null) ca.getCombinations(hand).getAll() else ca.getCombinations(hand).get(type).filter{ it.getValue() > lastValue!! }
     }
 
@@ -56,7 +60,7 @@ abstract class Character(open var name : String) {
     }
 
     open fun getAnalysis(hand: ArrayList<Card>) : CardAnalysis {
-        val ca = CardAnalyzer()
+        val ca = CardAnalyzer(game.deck)
         return ca.getCombinations(hand)
     }
 
@@ -92,7 +96,7 @@ abstract class Character(open var name : String) {
 
 }
 
-class Player(override var name : String) : Character(name) {
+class Player(override var name : String, override var game: TichuGame) : Character(name, game) {
 
     override val isHuman = true
 
@@ -102,7 +106,7 @@ class Player(override var name : String) : Character(name) {
 
 }
 
-class Zach(override var name : String) : Character(name){
+class Zach(override var name : String, override var game: TichuGame) : Character(name, game){
 
     override val tolerance: Int = 70
 
@@ -118,7 +122,7 @@ class Zach(override var name : String) : Character(name){
 
 }
 
-class Thong(override var name : String) : Character(name){
+class Thong(override var name : String, override var game: TichuGame) : Character(name, game){
 
     override val tolerance: Int = 65
 
@@ -134,7 +138,7 @@ class Thong(override var name : String) : Character(name){
 
 }
 
-class Brandon(override var name : String) : Character(name){
+class Brandon(override var name : String, override var game: TichuGame) : Character(name, game){
 
     override val tolerance: Int = 85
 
@@ -144,7 +148,7 @@ class Brandon(override var name : String) : Character(name){
 
 }
 
-class Nate(override var name : String) : Character(name){
+class Nate(override var name : String, override var game: TichuGame) : Character(name, game){
 
     override val tolerance: Int = 70
 
@@ -160,7 +164,7 @@ class Nate(override var name : String) : Character(name){
 
 }
 
-class Leasha(override var name : String) : Character(name){
+class Leasha(override var name : String, override var game: TichuGame) : Character(name, game){
 
     override val tolerance: Int = 70
 
@@ -170,7 +174,7 @@ class Leasha(override var name : String) : Character(name){
 
 }
 
-class Squire(override var name : String) : Character(name){
+class Squire(override var name : String, override var game: TichuGame) : Character(name, game){
 
     override val tolerance: Int = 68
 
@@ -180,7 +184,7 @@ class Squire(override var name : String) : Character(name){
 
 }
 
-class James(override var name : String) : Character(name){
+class James(override var name : String, override var game: TichuGame) : Character(name, game){
 
     override val tolerance: Int = 68
 
@@ -190,7 +194,7 @@ class James(override var name : String) : Character(name){
 
 }
 
-class Rachel(override var name : String) : Character(name){
+class Rachel(override var name : String, override var game: TichuGame) : Character(name, game){
 
     override val tolerance: Int = 78
 
@@ -200,7 +204,7 @@ class Rachel(override var name : String) : Character(name){
 
 }
 
-class Catherine(override var name : String) : Character(name){
+class Catherine(override var name : String, override var game: TichuGame) : Character(name, game){
 
     override val tolerance: Int = 78
 
@@ -210,7 +214,7 @@ class Catherine(override var name : String) : Character(name){
 
 }
 
-class Alex(override var name : String) : Character(name){
+class Alex(override var name : String, override var game: TichuGame) : Character(name, game){
 
     override val tolerance: Int = 80
 
@@ -220,7 +224,7 @@ class Alex(override var name : String) : Character(name){
 
 }
 
-class Mary(override var name : String) : Character(name){
+class Mary(override var name : String, override var game: TichuGame) : Character(name, game){
 
     override val tolerance: Int = 80
 
@@ -230,20 +234,3 @@ class Mary(override var name : String) : Character(name){
 
 }
 
-class Andy(override var name : String) : Character(name){
-
-    override val tolerance: Int = 90
-
-    override fun speak(dialog: String) {
-        super.speak(dialog)
-    }
-
-}
-
-class Adam(override var name : String) : Character(name){
-
-    override fun speak(dialog: String) {
-        super.speak(dialog)
-    }
-
-}
