@@ -51,8 +51,11 @@ public class GameScreen implements Screen {
     private OrthographicCamera camera;
     private TiledDrawable background;
     private Viewport viewport;
+    private OrthographicCamera textCamera;
     private OrthographicCamera backgroundCamera;
+    private ScreenViewport textViewport;
     private ScreenViewport backgroundViewport;
+    private Stage textStage;
     private Stage backgroundStage;
 
 
@@ -63,13 +66,21 @@ public class GameScreen implements Screen {
         boolean isAndroid = (Gdx.app.getType() == Android);
         silhouetteImage = (isAndroid) ? "silhouette-small.png" : "silhouette.png";
         cardAtlasFile = (isAndroid) ? "cards/smallcards.atlas" : "cards/smallcards.atlas";
+
+        //Game World and Sprite Camera
         camera = new OrthographicCamera(WORLD_WIDTH, WORLD_HEIGHT);
         viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
         stage = new Stage(viewport);
 
+        //Background Only
         backgroundCamera = new OrthographicCamera();
         backgroundViewport = new ScreenViewport(backgroundCamera);
         backgroundStage = new Stage(backgroundViewport);
+
+        //Text Only
+        textCamera = new OrthographicCamera();
+        textViewport = new ScreenViewport(textCamera);
+        textStage = new Stage(textViewport);
 
         AssetManager assetManager = new AssetManager();
         assetManager.load(skinFile, Skin.class);
@@ -94,7 +105,7 @@ public class GameScreen implements Screen {
 
         this.atlas = new TextureAtlas(Gdx.files.internal(cardAtlasFile));
 
-        tichu = new TichuGame(WORLD_WIDTH, WORLD_HEIGHT, this.stage, atlas);
+        tichu = new TichuGame(WORLD_WIDTH, WORLD_HEIGHT, this.stage, this.textStage, atlas);
 
         //TODO: Move this player setup to the new game screen.
         PlayerOverlord players = new PlayerOverlord();
@@ -119,6 +130,9 @@ public class GameScreen implements Screen {
         backgroundStage.getViewport().apply();
         backgroundStage.act();
         backgroundStage.draw();
+        textStage.getViewport().apply();
+        textStage.act();
+        textStage.draw();
         stage.getViewport().apply();
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();

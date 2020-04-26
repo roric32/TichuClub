@@ -23,8 +23,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TiledDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
-import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class MainMenuScreen implements Screen {
@@ -42,15 +40,11 @@ public class MainMenuScreen implements Screen {
         this.currentGame = game;
         stage = new Stage(new ScreenViewport());
 
-        AssetManager assetManager = new AssetManager();
-        assetManager.load(skinFile, Skin.class);
-        assetManager.finishLoading();
-
         //Declare root Table
         Table rootTable = new Table();
         rootTable.setFillParent(true);
 
-        Skin skin = assetManager.get(skinFile);
+        Skin skin = Config.Companion.getSkin();
         rootTable.setSkin(skin);
         FreeTypeFontGenerator ffgenerator = new FreeTypeFontGenerator(Gdx.files.internal("truetypefont/Brewers Bold Lhf.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();

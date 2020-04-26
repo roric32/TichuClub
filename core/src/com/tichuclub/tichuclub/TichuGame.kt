@@ -7,7 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import kotlin.math.roundToInt
 
-class TichuGame(val WORLD_WIDTH: Int, val WORLD_HEIGHT: Int, stage: Stage, atlas: TextureAtlas) {
+class TichuGame(val WORLD_WIDTH: Int, val WORLD_HEIGHT: Int, stage: Stage, textStage: Stage, atlas: TextureAtlas) {
 
     var scoreNS : Int = 0
     var scoreEW : Int = 0
@@ -21,6 +21,7 @@ class TichuGame(val WORLD_WIDTH: Int, val WORLD_HEIGHT: Int, stage: Stage, atlas
     private var delay : Long = 2_000
     var deck = Deck(true, atlas)
     var stage : Stage
+    var textStage : Stage
     var state : TichuState = StateGameStart(this)
     val isAndroid = Gdx.app.type == Application.ApplicationType.Android
 
@@ -31,6 +32,7 @@ class TichuGame(val WORLD_WIDTH: Int, val WORLD_HEIGHT: Int, stage: Stage, atlas
             eventDispatcher.addListener(TriggerDialogEventListener(TichuEvent(event), this))
         }
         this.stage = stage
+        this.textStage = textStage
     }
 
     fun setUp(players: PlayerOverlord) {
