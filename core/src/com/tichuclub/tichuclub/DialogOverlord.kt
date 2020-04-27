@@ -10,7 +10,7 @@ class DialogOverlord(private val dialogFile: String) {
 
     private fun readDialogFromFile() : Dialogs {
 
-        val dialogText = File(ClassLoader.getSystemResource("dialog.json").file).readText()
+        val dialogText = File(ClassLoader.getSystemResource(dialogFile).file).readText()
 
         val moshi = Moshi.Builder()
                 .add(KotlinJsonAdapterFactory())

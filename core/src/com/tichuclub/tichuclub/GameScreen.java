@@ -54,7 +54,7 @@ public class GameScreen implements Screen {
     private OrthographicCamera textCamera;
     private OrthographicCamera backgroundCamera;
     private ScreenViewport textViewport;
-    private ScreenViewport backgroundViewport;
+    private FitViewport backgroundViewport;
     private Stage textStage;
     private Stage backgroundStage;
 
@@ -74,7 +74,7 @@ public class GameScreen implements Screen {
 
         //Background Only
         backgroundCamera = new OrthographicCamera();
-        backgroundViewport = new ScreenViewport(backgroundCamera);
+        backgroundViewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), backgroundCamera);
         backgroundStage = new Stage(backgroundViewport);
 
         //Text Only

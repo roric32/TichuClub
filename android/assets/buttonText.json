@@ -1,0 +1,185 @@
+{
+  "buttons": [
+    {
+      "id" : 1,
+      "type" : "YES",
+      "confidence" : "NORMAL",
+      "text" : "YES"
+    },
+    {
+      "id" : 2,
+      "type" : "YES",
+      "confidence" : "NORMAL",
+      "text" : "YEP"
+    },
+    {
+      "id" : 3,
+      "type" : "YES",
+      "confidence" : "HIGH",
+      "text" : "DUH"
+    },
+    {
+      "id" : 4,
+      "type" : "YES",
+      "confidence" : "LOW",
+      "text" : "YEAH"
+    },
+    {
+      "id" : 5,
+      "type" : "YES",
+      "confidence" : "NORMAL",
+      "text" : "DO IT"
+    },
+    {
+      "id" : 6,
+      "type" : "YES",
+      "confidence" : "NORMAL",
+      "text" : "ROCK"
+    },
+    {
+      "id" : 7,
+      "type" : "YES",
+      "confidence" : "HIGH",
+      "text" : "HELL, YEAH"
+    },
+    {
+      "id" : 8,
+      "type" : "YES",
+      "confidence" : "HIGH",
+      "text" : "OF COURSE"
+    },
+    {
+      "id" : 9,
+      "type" : "YES",
+      "confidence" : "HIGH",
+      "text" : "NATURALLY"
+    },
+    {
+      "id" : 10,
+      "type" : "YES",
+      "confidence" : "NORMAL",
+      "text" : "AFFIRMATIVE"
+    },
+    {
+      "id" : 11,
+      "type" : "YES",
+      "confidence" : "LOW",
+      "text" : "GUESS SO"
+    },
+    {
+      "id" : 12,
+      "type" : "YES",
+      "confidence" : "LOW",
+      "text" : "YOLO"
+    },
+    {
+      "id" : 13,
+      "type" : "YES",
+      "confidence" : "LOW",
+      "text" : "YES..."
+    },
+    {
+      "id" : 14,
+      "type" : "YES",
+      "confidence" : "NORMAL",
+      "text" : "I WILL"
+    },
+    {
+      "id" : 15,
+      "type" : "YES",
+      "confidence" : "HIGH",
+      "text" : "THEY'RE DOOMED"
+    },
+    {
+      "id" : 16,
+      "type" : "NO",
+      "confidence" : "NORMAL",
+      "text": "NO"
+    },
+    {
+      "id" : 17,
+      "type" : "NO",
+      "confidence" : "LOW",
+      "text" : "DEF NOT"
+    },
+    {
+      "id" : 18,
+      "type" : "NO",
+      "confidence" : "NORMAL",
+      "text" : "NOPE"
+    },
+    {
+      "id" : 19,
+      "type" : "NO",
+      "confidence" : "LOW",
+      "text" : "HARD PASS"
+    },
+    {
+      "id" : 20,
+      "type" : "NO",
+      "confidence" : "NORMAL",
+      "text" : "NAH"
+    },
+    {
+      "id" : 21,
+      "type" : "NO",
+      "confidence" : "HIGH",
+      "text" : "SADLY, NO"
+    },
+    {
+      "id" : 22,
+      "type" : "NO",
+      "confidence" : "HIGH",
+      "text" : "PASS"
+    },
+    {
+      "id" : 23,
+      "type" : "NO",
+      "confidence" : "HIGH",
+      "text" : "WUSSING OUT"
+    },
+    {
+      "id" : 24,
+      "type" : "NO",
+      "confidence" : "LOW",
+      "text" : "UH, NO."
+    },
+    {
+      "id" : 25,
+      "type" : "NO",
+      "confidence" : "LOW",
+      "text" : "I WISH"
+    },
+    {
+      "id" : 26,
+      "type" : "NO",
+      "confidence" : "LOW",
+      "text" : "HELL, NO"
+    },
+    {
+      "id" : 27,
+      "type" : "NO",
+      "confidence" : "LOW",
+      "text" : "YOU CRAZY?"
+    },
+    {
+      "id" : 28,
+      "type" : "NO",
+      "confidence" : "LOW",
+      "text" : "NO WAY"
+    },
+    {
+      "id" : 29,
+      "type" : "NO",
+      "confidence" : "HIGH",
+      "text" : "NO"
+    },
+    {
+      "id" : 30,
+      "type" : "NO",
+      "confidence" : "NORMAL",
+      "text" : "PASS"
+    }
+
+  ]
+}

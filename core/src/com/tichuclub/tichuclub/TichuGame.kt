@@ -26,6 +26,8 @@ class TichuGame(val WORLD_WIDTH: Int, val WORLD_HEIGHT: Int, stage: Stage, textS
     val isAndroid = Gdx.app.type == Application.ApplicationType.Android
 
     lateinit var players: PlayerOverlord
+    val WIDTH_UNITS : Float = (Gdx.graphics.width/WORLD_WIDTH).toFloat()
+    val HEIGHT_UNITS : Float = (Gdx.graphics.height/WORLD_HEIGHT).toFloat()
 
     init {
         for(event in TichuEvents.values()) {
