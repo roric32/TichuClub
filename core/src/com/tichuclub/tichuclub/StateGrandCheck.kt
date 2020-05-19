@@ -2,17 +2,20 @@ package com.tichuclub.tichuclub
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter
 import com.badlogic.gdx.math.Vector3
+import com.badlogic.gdx.scenes.scene2d.InputEvent
+import com.badlogic.gdx.scenes.scene2d.actions.DelayAction
+import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction
+import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction
+import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import java.io.File
 
 
 class StateGrandCheck(tichu: TichuGame) : TichuState(tichu) {
@@ -68,13 +71,13 @@ class StateGrandCheck(tichu: TichuGame) : TichuState(tichu) {
         val confidence : Confidence
 
         when(handTotal) {
-            in 0..37 -> {
+            in 15..32 -> {
                 confidence = Confidence.LOW
             }
-            in 38..74 -> {
+            in 33..65 -> {
                 confidence = Confidence.NORMAL
             }
-            in 75..113 -> {
+            in 66..113 -> {
                 confidence = Confidence.HIGH
             }
             else -> {
@@ -87,6 +90,37 @@ class StateGrandCheck(tichu: TichuGame) : TichuState(tichu) {
 
         val yesButton = TextButton(yesText, skin)
         val noButton = TextButton(noText, skin)
+
+        yesButton.addListener(object : ClickListener() {
+            override fun clicked(event: InputEvent, x: Float, y: Float) {
+                //Hide our buttons.
+                callGrandImage.remove()
+                noButton.remove()
+                yesButton.remove()
+
+                tichu.showTichuAnimation(TichuType.GRAND_TICHU, tichu.players.south)
+
+                //Let the opponents react to the player's decision to call Grand.
+                tichu.players.south.calledGrand = true
+                tichu.eventDispatcher.dispatch(TichuEvent(TichuEvents.GRAND_TICHU_CALL_BY_PLAYER))
+                tichu.checkForGrandTichu()
+                tichu.state.nextState()
+            }
+        })
+
+        noButton.addListener(object : ClickListener() {
+            override fun clicked(event: InputEvent, x: Float, y: Float) {
+                //Hide our buttons.
+                callGrandImage.remove()
+                noButton.remove()
+                yesButton.remove()
+
+                tichu.players.south.calledGrand = false
+                tichu.eventDispatcher.dispatch(TichuEvent(TichuEvents.GRAND_TICHU_CALL_SKIPPED_BY_PLAYER))
+                tichu.checkForGrandTichu()
+                tichu.state.nextState()
+            }
+        })
 
         val itsinyourhead = Table()
         val filler = Table()
@@ -105,6 +139,7 @@ class StateGrandCheck(tichu: TichuGame) : TichuState(tichu) {
         rootTable.debug = debug
 
         tichu.textStage.addActor(rootTable)
+        Gdx.input.inputProcessor = tichu.textStage
 
     }
 

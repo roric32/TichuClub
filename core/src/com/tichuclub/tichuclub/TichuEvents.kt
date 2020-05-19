@@ -1,6 +1,7 @@
 package com.tichuclub.tichuclub
 
 enum class TichuEvents {
+    GRAND_TICHU_CALL_SKIPPED_BY_PLAYER,
     GRAND_TICHU_CALL_BY_PLAYER,
     GRAND_TICHU_CALL_BY_ZACH,
     GRAND_TICHU_CALL_BY_NATE,

@@ -34,13 +34,13 @@
       "id" : 6,
       "type" : "YES",
       "confidence" : "NORMAL",
-      "text" : "ROCK"
+      "text" : "ROCK IT"
     },
     {
       "id" : 7,
       "type" : "YES",
       "confidence" : "HIGH",
-      "text" : "HELL, YEAH"
+      "text" : "HELL YEAH"
     },
     {
       "id" : 8,
@@ -88,7 +88,7 @@
       "id" : 15,
       "type" : "YES",
       "confidence" : "HIGH",
-      "text" : "THEY'RE DOOMED"
+      "text" : "BRING IT"
     },
     {
       "id" : 16,
@@ -136,7 +136,7 @@
       "id" : 23,
       "type" : "NO",
       "confidence" : "HIGH",
-      "text" : "WUSSING OUT"
+      "text" : "WUSS OUT"
     },
     {
       "id" : 24,

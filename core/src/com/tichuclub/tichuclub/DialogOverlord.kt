@@ -1,5 +1,6 @@
 package com.tichuclub.tichuclub
 
+import com.badlogic.gdx.Gdx
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.squareup.moshi.Moshi
 import java.io.File
@@ -10,7 +11,7 @@ class DialogOverlord(private val dialogFile: String) {
 
     private fun readDialogFromFile() : Dialogs {
 
-        val dialogText = File(ClassLoader.getSystemResource(dialogFile).file).readText()
+        val dialogText = Gdx.files.internal(dialogFile).readString()
 
         val moshi = Moshi.Builder()
                 .add(KotlinJsonAdapterFactory())

@@ -2,10 +2,26 @@ package com.tichuclub.tichuclub
 
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.NinePatch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
+import com.badlogic.gdx.graphics.g2d.TextureRegion
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
+import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.actions.*
 import com.badlogic.gdx.scenes.scene2d.ui.Image
+import com.badlogic.gdx.scenes.scene2d.ui.Label
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable
+import com.badlogic.gdx.scenes.scene2d.utils.TiledDrawable
 import kotlin.math.roundToInt
+
+enum class TichuType {
+    TICHU,
+    GRAND_TICHU
+}
 
 class TichuGame(val WORLD_WIDTH: Int, val WORLD_HEIGHT: Int, stage: Stage, textStage: Stage, atlas: TextureAtlas) {
 
@@ -17,6 +33,7 @@ class TichuGame(val WORLD_WIDTH: Int, val WORLD_HEIGHT: Int, stage: Stage, textS
     var eventDispatcher = EventDispatcher(ArrayList())
     val dialogs = DialogOverlord("dialog.json")
     val shuffleSound = Gdx.audio.newMusic(Gdx.files.internal("shuffle.wav"))
+    val tichuSound = Gdx.audio.newMusic(Gdx.files.internal("gong.wav"))
     private var endRound = false
     private var delay : Long = 2_000
     var deck = Deck(true, atlas)
@@ -24,6 +41,14 @@ class TichuGame(val WORLD_WIDTH: Int, val WORLD_HEIGHT: Int, stage: Stage, textS
     var textStage : Stage
     var state : TichuState = StateGameStart(this)
     val isAndroid = Gdx.app.type == Application.ApplicationType.Android
+    val speechBubbleAtlas = TextureAtlas(Gdx.files.internal("speebubb.atlas"))
+    val speechBubble = speechBubbleAtlas.createPatch("sbubble")
+    val speechBubbleTexture = NinePatchDrawable(speechBubble)
+    val bubbles = HashMap<Position, Label>()
+    val bannerTexture = Texture(Gdx.files.internal("banner.png"))
+    val bannerRegion = TextureRegion(bannerTexture)
+    val bannerTile = TiledDrawable(this.bannerRegion)
+    val bannerImage = Image(bannerTile)
 
     lateinit var players: PlayerOverlord
     val WIDTH_UNITS : Float = (Gdx.graphics.width/WORLD_WIDTH).toFloat()
@@ -35,10 +60,28 @@ class TichuGame(val WORLD_WIDTH: Int, val WORLD_HEIGHT: Int, stage: Stage, textS
         }
         this.stage = stage
         this.textStage = textStage
+
+        this.bannerImage.width = this.textStage.width
+        this.bannerImage.setPosition(-Gdx.graphics.width.toFloat(), (Gdx.graphics.height/2f - this.bannerImage.height/2f))
+        this.bannerImage.toFront()
+
+        this.textStage.addActor(bannerImage)
     }
 
     fun setUp(players: PlayerOverlord) {
+
         this.players = players
+
+        val style = Label.LabelStyle(Config.getFont(12, 1, Color.BLACK, "truetypefont/Amble-Regular.ttf"), Color.BLACK)
+        style.background = this.speechBubbleTexture
+        val northBubble = Label("TEST", style)
+        northBubble.pack()
+
+        northBubble.setPosition((Gdx.graphics.width/2f) - northBubble.width/2f, (Gdx.graphics.height/2f + 60f))
+        this.bubbles[Position.WEST] = Label("", style)
+        this.bubbles[Position.EAST] = Label("", style)
+        //textStage.addActor(northBubble)
+
     }
 
     fun play() {
@@ -49,18 +92,12 @@ class TichuGame(val WORLD_WIDTH: Int, val WORLD_HEIGHT: Int, stage: Stage, textS
      * Player is shown hand and then asked if they want to call Grand Tichu.
      * Each AI character decides if he wants to call Grand Tichu.
      */
-    private fun checkForGrandTichu() {
-
-
-        /*
-        askPlayerForCall(true)
+    fun checkForGrandTichu() {
 
         //AI checks if they want to call Grand
         val playersWhoWantToCallGrand = ArrayList<Character>()
 
-        for(character in players.getCharactersAsList()) {
-            if (character is Player) continue
-
+        for(character in players.getCharactersAsList().filter{!it.isHuman}) {
             if(character.wantsToCall(true)) {
                 playersWhoWantToCallGrand.add(character)
             }
@@ -78,7 +115,6 @@ class TichuGame(val WORLD_WIDTH: Int, val WORLD_HEIGHT: Int, stage: Stage, textS
             }
 
         }
-        */
 
     }
 
@@ -177,10 +213,6 @@ class TichuGame(val WORLD_WIDTH: Int, val WORLD_HEIGHT: Int, stage: Stage, textS
 
         if(startPlayer.isHuman) {
             print("\nThis is your hand: \n ${startPlayer.hand.sortedWith(compareBy({it.value}))}\n")
-
-            if(!startPlayer.calledGrand) {
-                askPlayerForCall()
-            }
 
             firstCombo = humanPlaysFirst(startPlayer.hand)
             startPlayer.removeCardsFromHand(firstCombo)
@@ -395,28 +427,50 @@ class TichuGame(val WORLD_WIDTH: Int, val WORLD_HEIGHT: Int, stage: Stage, textS
 
     }
 
-    private fun askPlayerForCall(isGrand: Boolean = false) {
+    fun showTichuAnimation(type: TichuType, character: Character) {
 
-        var answer : String
+        //Play a cool sound.
+        this.tichuSound.play()
 
-        do {
-            var tichuType : String = ""
-            if(isGrand) tichuType = "Grand "
-            val message = "Do you wish to call ${tichuType}Tichu? (Y/N): "
-            println(message)
-            answer = readLine()!!
-        } while(!(answer.equals("Y").or(answer.equals("N"))))
+        //Show our cool banner.
+        val moveAction = MoveToAction()
+        moveAction.setPosition(0f, this.bannerImage.y)
+        moveAction.duration = 0.3f
 
-        if(answer == "Y") {
-            if(isGrand) {
-                players.getCharacterFromPosition(Position.SOUTH).calledGrand = true
-                eventDispatcher.dispatch(TichuEvent(TichuEvents.GRAND_TICHU_CALL_BY_PLAYER))
-            } else {
-                players.getCharacterFromPosition(Position.SOUTH).calledTichu = true
-                eventDispatcher.dispatch(TichuEvent(TichuEvents.REACT_TO_CALL_BY_PLAYER))
-            }
+        val waitAction = DelayAction()
+        waitAction.duration = 2.0f
+
+        val font = Config.getFont(WORLD_WIDTH, Color.WHITE, 1f, Color.BLACK)
+        val skin = Config.getSkin()
+        skin.get(Label.LabelStyle::class.java).font = font
+        val labelText = when(type) {
+            TichuType.GRAND_TICHU ->
+                "${character.name} calls \n GRAND TICHU!"
+            TichuType.TICHU ->
+                "${character.name} calls \n TICHU!"
         }
 
+        val callText = Label(labelText, skin)
+
+        callText.x = Gdx.graphics.width/2f - (callText.width/2f)
+        callText.y = stage.camera.project(Vector3(0f, WORLD_HEIGHT/2.1f, 0f)).y
+        callText.addAction(Actions.fadeIn(0.3f))
+
+        val removeAction = MoveToAction()
+        removeAction.setPosition(Gdx.graphics.width + 1f, this.bannerImage.y)
+        removeAction.duration = 0.3f
+
+        val actionChain = SequenceAction(moveAction, (object : RunnableAction() {
+            override fun run() {
+                textStage.addActor(callText)
+            }
+        }), waitAction, (object: RunnableAction() {
+            override fun run() {
+                callText.remove()
+            }
+        }), removeAction)
+
+        this.bannerImage.addAction(actionChain)
 
     }
 

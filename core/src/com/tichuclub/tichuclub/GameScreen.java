@@ -130,12 +130,12 @@ public class GameScreen implements Screen {
         backgroundStage.getViewport().apply();
         backgroundStage.act();
         backgroundStage.draw();
-        textStage.getViewport().apply();
-        textStage.act();
-        textStage.draw();
         stage.getViewport().apply();
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
+        textStage.getViewport().apply();
+        textStage.act();
+        textStage.draw();
         if (Gdx.input.isKeyPressed(Input.Keys.BACK)) {
             this.hide();
             game.setScreen(ScreenOverlord.get(ScreenEnum.MAIN_MENU));

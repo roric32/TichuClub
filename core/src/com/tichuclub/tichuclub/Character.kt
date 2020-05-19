@@ -1,5 +1,9 @@
 package com.tichuclub.tichuclub
 
+import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.NinePatch
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable
 import com.tichuclub.tichuclub.CardCombination as CardCombination
 
 abstract class Character(open var name : String, open var game: TichuGame) {
