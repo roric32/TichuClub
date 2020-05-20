@@ -53,11 +53,20 @@ class NumericCard(override var suit: Suit, override var value: Int, override var
     }
 
     override fun draw(batch: Batch?, parentAlpha: Float) {
-        super.draw(batch, parentAlpha)
+        //super.draw(batch, parentAlpha)
         if(batch !== null) {
-            //batch.draw(currentSide, currentSide.x, currentSide.y, currentSide.originX, currentSide.originY, currentSide.width, currentSide.height, currentSide.scaleX, currentSide.scaleY, currentSide.rotation, true)
-            currentSide.draw(batch, parentAlpha)
+            batch.draw(currentSide, currentSide.x, currentSide.y, currentSide.originX, currentSide.originY, currentSide.width, currentSide.height, currentSide.scaleX, currentSide.scaleY, currentSide.rotation)
+            //currentSide.draw(batch, parentAlpha)
         }
+    }
+
+    override fun setRotation(degrees: Float) {
+        currentSide.rotation = degrees
+        super.setRotation(degrees)
+    }
+
+    override fun rotateBy(amountInDegrees: Float) {
+        currentSide.rotation += amountInDegrees
     }
 
     override fun setSize(width: Float, height: Float) {
@@ -95,17 +104,26 @@ class SpecialCard(override var suit: Suit, override var value: Int, override var
     override var currentSide : Sprite = backImage
 
     init {
-        setBounds(currentSide.x,currentSide.y,currentSide.width,currentSide.height);
+        setBounds(currentSide.x,currentSide.y,currentSide.width,currentSide.height)
         touchable = Touchable.enabled
         this.name = specialName
     }
 
     override fun draw(batch: Batch?, parentAlpha: Float) {
-        super.draw(batch, parentAlpha)
+        //super.draw(batch, parentAlpha)
         if(batch !== null) {
-            //batch.draw(currentSide, currentSide.x, currentSide.y, currentSide.originX, currentSide.originY, currentSide.width, currentSide.height, currentSide.scaleX, currentSide.scaleY, currentSide.rotation, true)
-            currentSide.draw(batch, parentAlpha)
+            batch.draw(currentSide, currentSide.x, currentSide.y, currentSide.originX, currentSide.originY, currentSide.width, currentSide.height, currentSide.scaleX, currentSide.scaleY, currentSide.rotation)
+            //currentSide.draw(batch, parentAlpha)
         }
+    }
+
+    override fun setRotation(degrees: Float) {
+        currentSide.rotation = degrees
+        super.setRotation(degrees)
+    }
+
+    override fun rotateBy(amountInDegrees: Float) {
+        currentSide.rotation += amountInDegrees
     }
 
     override fun setSize(width: Float, height: Float) {
