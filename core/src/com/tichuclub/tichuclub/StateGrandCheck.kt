@@ -4,15 +4,13 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.InputEvent
-import com.badlogic.gdx.scenes.scene2d.actions.DelayAction
-import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction
-import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction
-import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
+import com.badlogic.gdx.utils.Timer
+import com.badlogic.gdx.utils.Timer.Task
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -102,9 +100,14 @@ class StateGrandCheck(tichu: TichuGame) : TichuState(tichu) {
 
                 //Let the opponents react to the player's decision to call Grand.
                 tichu.players.south.calledGrand = true
-                tichu.eventDispatcher.dispatch(TichuEvent(TichuEvents.GRAND_TICHU_CALL_BY_PLAYER))
-                tichu.checkForGrandTichu()
-                tichu.state.nextState()
+
+                Timer.schedule(object : Task() {
+                    override fun run() {
+                        tichu.eventDispatcher.dispatch(TichuEvent(TichuEvents.GRAND_TICHU_CALL_BY_PLAYER))
+                        tichu.checkForGrandTichu()
+                        tichu.state.nextState()
+                    }
+                }, 3.5f)
             }
         })
 

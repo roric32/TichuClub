@@ -4,19 +4,18 @@ import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.graphics.g2d.NinePatch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.graphics.g2d.TextureRegion
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.*
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.Label
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable
 import com.badlogic.gdx.scenes.scene2d.utils.TiledDrawable
-import kotlin.math.roundToInt
+import com.badlogic.gdx.utils.Timer
+import com.badlogic.gdx.utils.Timer.Task
+
 
 enum class TichuType {
     TICHU,
@@ -63,7 +62,6 @@ class TichuGame(val WORLD_WIDTH: Int, val WORLD_HEIGHT: Int, stage: Stage, textS
 
         this.bannerImage.width = this.textStage.width
         this.bannerImage.setPosition(-Gdx.graphics.width.toFloat(), (Gdx.graphics.height/2f - this.bannerImage.height/2f))
-        this.bannerImage.toFront()
 
         this.textStage.addActor(bannerImage)
     }
@@ -97,7 +95,6 @@ class TichuGame(val WORLD_WIDTH: Int, val WORLD_HEIGHT: Int, stage: Stage, textS
         textStage.addActor(players.east)
         textStage.addActor(players.north)
         //textStage.addActor(northBubble)
-        this.bannerImage.toFront()
 
     }
 
@@ -122,12 +119,20 @@ class TichuGame(val WORLD_WIDTH: Int, val WORLD_HEIGHT: Int, stage: Stage, textS
 
         playersWhoWantToCallGrand.shuffle()
 
-        for(player in playersWhoWantToCallGrand) {
+        for((x, player) in playersWhoWantToCallGrand.withIndex()) {
 
+            //They'll play nicely and won't call grand over each other.
             if(!players.getCharacterFromPosition(player.partner).calledGrand) {
+
                 player.calledGrand = true
                 val charName: String = player.name
-                showTichuAnimation(TichuType.GRAND_TICHU, player)
+
+                Timer.schedule(object : Task() {
+                        override fun run() {
+                            showTichuAnimation(TichuType.GRAND_TICHU, player)
+                        }
+                }, 4f * x)
+
                 val event = TichuEvents.valueOf("GRAND_TICHU_CALL_BY_${charName.toUpperCase()}")
                 eventDispatcher.dispatch(TichuEvent(event))
             }
@@ -446,6 +451,9 @@ class TichuGame(val WORLD_WIDTH: Int, val WORLD_HEIGHT: Int, stage: Stage, textS
     }
 
     fun showTichuAnimation(type: TichuType, character: Character) {
+
+        this.bannerImage.setPosition(-Gdx.graphics.width.toFloat(), (Gdx.graphics.height/2f - this.bannerImage.height/2f))
+        this.bannerImage.toFront()
 
         //Play a cool sound.
         this.tichuSound.play()
