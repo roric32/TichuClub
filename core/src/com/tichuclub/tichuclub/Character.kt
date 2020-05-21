@@ -2,16 +2,24 @@ package com.tichuclub.tichuclub
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.NinePatch
+import com.badlogic.gdx.graphics.g2d.Sprite
+import com.badlogic.gdx.scenes.scene2d.Actor
+import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable
 import com.tichuclub.tichuclub.CardCombination as CardCombination
 
-abstract class Character(open var name : String, open var game: TichuGame) {
+abstract class Character(open val characterName: String, open var game: TichuGame) : Actor() {
 
     lateinit var position: Position
     lateinit var partner: Position
     lateinit var leftOpponent: Position
     lateinit var rightOpponent: Position
+
+    abstract var expressions: Map<Expression, Sprite>
+    open var currentSprite: Sprite = Sprite(Texture(Gdx.files.internal("silhouette.png")))
+    open var currentExpression = Expression.NORMAL
 
     var calledTichu: Boolean = false
     var calledGrand: Boolean = false
@@ -23,6 +31,10 @@ abstract class Character(open var name : String, open var game: TichuGame) {
     var hand = ArrayList<Card>()
     var passedCards = ArrayList<Card>()
     val cardsWon = ArrayList<Card>()
+
+    init {
+        touchable = Touchable.enabled
+    }
 
     open fun wantsToCall(grand : Boolean) : Boolean {
         return if(grand) evaluateGrandTichu() > tolerance else evaluateTichu() > tolerance
@@ -60,7 +72,7 @@ abstract class Character(open var name : String, open var game: TichuGame) {
     }
 
     open fun speak(dialog: String) {
-        println("$name says: \"$dialog\"")
+        println("$characterName says: \"$dialog\"")
     }
 
     open fun getAnalysis(hand: ArrayList<Card>) : CardAnalysis {
@@ -98,21 +110,61 @@ abstract class Character(open var name : String, open var game: TichuGame) {
         hand.removeAll(cards.cards)
     }
 
+    override fun draw(batch: Batch?, parentAlpha: Float) {
+        if(batch !== null) {
+            batch.draw(currentSprite, currentSprite.x, currentSprite.y, currentSprite.originX, currentSprite.originY, currentSprite.width, currentSprite.height, currentSprite.scaleX, currentSprite.scaleY, currentSprite.rotation)
+        }
+    }
+
+    override fun setRotation(degrees: Float) {
+        currentSprite.rotation = degrees
+        super.setRotation(degrees)
+    }
+
+    override fun rotateBy(amountInDegrees: Float) {
+        currentSprite.rotation += amountInDegrees
+    }
+
+    override fun setSize(width: Float, height: Float) {
+        currentSprite.setSize(width, height)
+        super.setSize(width, height)
+    }
+
+    override fun setPosition(x: Float, y: Float) {
+        currentSprite.setPosition(x, y)
+        super.setPosition(x, y)
+    }
+
+    override fun positionChanged() {
+        super.positionChanged()
+        currentSprite.setPosition(x, y)
+    }
+
 }
 
-class Player(override var name : String, override var game: TichuGame) : Character(name, game) {
+class Player(override var characterName : String, override var game: TichuGame) : Character(characterName, game) {
+
+    override lateinit var expressions: Map<Expression, Sprite>
+
+    init {
+        this.name = characterName
+        this.expressions = Config.getCharacterSprites(this)
+    }
 
     override val isHuman = true
 
-    override fun speak(dialog: String) {
-        super.speak(dialog)
-    }
-
 }
 
-class Zach(override var name : String, override var game: TichuGame) : Character(name, game){
+class Zach(override var characterName : String, override var game: TichuGame) : Character(characterName, game){
 
     override val tolerance: Int = 70
+    override var expressions: Map<Expression, Sprite> = Config.getCharacterSprites(this)
+    override var currentSprite: Sprite = expressions[Expression.NORMAL] ?: throw Exception("Exception: Expression NORMAL not found for character: ${this.characterName}}")
+
+    init {
+        this.name = characterName
+        setBounds(currentSprite.x,currentSprite.y,currentSprite.width,currentSprite.height);
+    }
 
     override fun speak(dialog: String) {
         super.speak(dialog)
@@ -126,9 +178,17 @@ class Zach(override var name : String, override var game: TichuGame) : Character
 
 }
 
-class Thong(override var name : String, override var game: TichuGame) : Character(name, game){
+class Thong(override var characterName : String, override var game: TichuGame) : Character(characterName, game){
 
     override val tolerance: Int = 65
+    override var expressions: Map<Expression, Sprite> = Config.getCharacterSprites(this)
+    override var currentSprite: Sprite = expressions[Expression.NORMAL] ?: throw Exception("Exception: Expression NORMAL not found for character: ${this.characterName}}")
+
+    init {
+        this.name = characterName
+        setBounds(currentSprite.x,currentSprite.y,currentSprite.width,currentSprite.height);
+    }
+
 
     override fun speak(dialog: String) {
         super.speak(dialog)
@@ -142,9 +202,16 @@ class Thong(override var name : String, override var game: TichuGame) : Characte
 
 }
 
-class Brandon(override var name : String, override var game: TichuGame) : Character(name, game){
+class Brandon(override var characterName : String, override var game: TichuGame) : Character(characterName, game){
 
     override val tolerance: Int = 85
+    override var expressions: Map<Expression, Sprite> = Config.getCharacterSprites(this)
+
+    init {
+        this.name = characterName
+        setBounds(currentSprite.x,currentSprite.y,currentSprite.width,currentSprite.height);
+    }
+
 
     override fun speak(dialog: String) {
         super.speak(dialog)
@@ -152,9 +219,16 @@ class Brandon(override var name : String, override var game: TichuGame) : Charac
 
 }
 
-class Nate(override var name : String, override var game: TichuGame) : Character(name, game){
+class Nate(override var characterName : String, override var game: TichuGame) : Character(characterName, game){
 
     override val tolerance: Int = 70
+    override var expressions: Map<Expression, Sprite> = Config.getCharacterSprites(this)
+    override var currentSprite: Sprite = expressions[Expression.NORMAL] ?: throw Exception("Exception: Expression NORMAL not found for character: ${this.characterName}}")
+
+    init {
+        this.name = characterName
+        setBounds(currentSprite.x,currentSprite.y,currentSprite.width,currentSprite.height);
+    }
 
     override fun speak(dialog: String) {
         super.speak(dialog)
@@ -168,7 +242,14 @@ class Nate(override var name : String, override var game: TichuGame) : Character
 
 }
 
-class Leasha(override var name : String, override var game: TichuGame) : Character(name, game){
+class Leasha(override var characterName : String, override var game: TichuGame) : Character(characterName, game){
+
+    override var expressions: Map<Expression, Sprite> = Config.getCharacterSprites(this)
+
+    init {
+        this.name = characterName
+        setBounds(currentSprite.x,currentSprite.y,currentSprite.width,currentSprite.height);
+    }
 
     override val tolerance: Int = 70
 
@@ -178,7 +259,14 @@ class Leasha(override var name : String, override var game: TichuGame) : Charact
 
 }
 
-class Squire(override var name : String, override var game: TichuGame) : Character(name, game){
+class Squire(override var characterName : String, override var game: TichuGame) : Character(characterName, game){
+
+    override var expressions: Map<Expression, Sprite> = Config.getCharacterSprites(this)
+
+    init {
+        this.name = characterName
+        setBounds(currentSprite.x,currentSprite.y,currentSprite.width,currentSprite.height);
+    }
 
     override val tolerance: Int = 68
 
@@ -188,7 +276,14 @@ class Squire(override var name : String, override var game: TichuGame) : Charact
 
 }
 
-class James(override var name : String, override var game: TichuGame) : Character(name, game){
+class James(override var characterName : String, override var game: TichuGame) : Character(characterName, game){
+
+    override var expressions: Map<Expression, Sprite> = Config.getCharacterSprites(this)
+
+    init {
+        this.name = characterName
+        setBounds(currentSprite.x,currentSprite.y,currentSprite.width,currentSprite.height);
+    }
 
     override val tolerance: Int = 68
 
@@ -198,7 +293,14 @@ class James(override var name : String, override var game: TichuGame) : Characte
 
 }
 
-class Rachel(override var name : String, override var game: TichuGame) : Character(name, game){
+class Rachel(override var characterName : String, override var game: TichuGame) : Character(characterName, game){
+
+    override var expressions: Map<Expression, Sprite> = Config.getCharacterSprites(this)
+
+    init {
+        this.name = characterName
+        setBounds(currentSprite.x,currentSprite.y,currentSprite.width,currentSprite.height);
+    }
 
     override val tolerance: Int = 78
 
@@ -208,7 +310,14 @@ class Rachel(override var name : String, override var game: TichuGame) : Charact
 
 }
 
-class Catherine(override var name : String, override var game: TichuGame) : Character(name, game){
+class Catherine(override var characterName : String, override var game: TichuGame) : Character(characterName, game){
+
+    override var expressions: Map<Expression, Sprite> = Config.getCharacterSprites(this)
+
+    init {
+        this.name = characterName
+        setBounds(currentSprite.x,currentSprite.y,currentSprite.width,currentSprite.height);
+    }
 
     override val tolerance: Int = 78
 
@@ -218,7 +327,14 @@ class Catherine(override var name : String, override var game: TichuGame) : Char
 
 }
 
-class Alex(override var name : String, override var game: TichuGame) : Character(name, game){
+class Alex(override var characterName : String, override var game: TichuGame) : Character(characterName, game){
+
+    override var expressions: Map<Expression, Sprite> = Config.getCharacterSprites(this)
+
+    init {
+        this.name = characterName
+        setBounds(currentSprite.x,currentSprite.y,currentSprite.width,currentSprite.height);
+    }
 
     override val tolerance: Int = 80
 
@@ -228,7 +344,14 @@ class Alex(override var name : String, override var game: TichuGame) : Character
 
 }
 
-class Mary(override var name : String, override var game: TichuGame) : Character(name, game){
+class Mary(override var characterName : String, override var game: TichuGame) : Character(characterName, game){
+
+    override var expressions: Map<Expression, Sprite> = Config.getCharacterSprites(this)
+
+    init {
+        this.name = characterName
+        setBounds(currentSprite.x,currentSprite.y,currentSprite.width,currentSprite.height);
+    }
 
     override val tolerance: Int = 80
 

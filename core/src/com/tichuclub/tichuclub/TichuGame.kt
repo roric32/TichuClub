@@ -80,7 +80,24 @@ class TichuGame(val WORLD_WIDTH: Int, val WORLD_HEIGHT: Int, stage: Stage, textS
         northBubble.setPosition((Gdx.graphics.width/2f) - northBubble.width/2f, (Gdx.graphics.height/2f + 60f))
         this.bubbles[Position.WEST] = Label("", style)
         this.bubbles[Position.EAST] = Label("", style)
+
+        players.north.setSize(200f, 200f)
+        players.north.setPosition((Gdx.graphics.width/2f) - (players.north.width/2f), Gdx.graphics.height - players.north.height)
+        players.north.zIndex = 0
+
+        players.east.setSize(200f, 200f)
+        players.east.setPosition((Gdx.graphics.width - players.east.width), (Gdx.graphics.height/2f - players.east.height/2f))
+        players.east.zIndex = 0
+
+        players.west.setSize(200f, 200f)
+        players.west.setPosition(0f, (Gdx.graphics.height/2f - players.west.height/2f))
+        players.west.zIndex = 0
+
+        textStage.addActor(players.west)
+        textStage.addActor(players.east)
+        textStage.addActor(players.north)
         //textStage.addActor(northBubble)
+        this.bannerImage.toFront()
 
     }
 
@@ -110,6 +127,7 @@ class TichuGame(val WORLD_WIDTH: Int, val WORLD_HEIGHT: Int, stage: Stage, textS
             if(!players.getCharacterFromPosition(player.partner).calledGrand) {
                 player.calledGrand = true
                 val charName: String = player.name
+                showTichuAnimation(TichuType.GRAND_TICHU, player)
                 val event = TichuEvents.valueOf("GRAND_TICHU_CALL_BY_${charName.toUpperCase()}")
                 eventDispatcher.dispatch(TichuEvent(event))
             }

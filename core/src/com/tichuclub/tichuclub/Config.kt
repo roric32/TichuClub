@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.BitmapFont
+import com.badlogic.gdx.graphics.g2d.Sprite
+import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import kotlin.math.roundToInt
@@ -40,6 +42,20 @@ class Config {
             val generatedFont = ffgenerator.generateFont(parameter)
             ffgenerator.dispose()
             return generatedFont
+        }
+
+        fun getCharacterSprites(character: Character) : Map<Expression, Sprite> {
+
+            val characterMap = HashMap<Expression, Sprite>()
+
+            //TODO: Actual portrait art. For now "Zach" always just refers to the generic silhouette image.
+            val expressionsMap = TextureAtlas(Gdx.files.internal("expressions.atlas"))
+            for(expression: Expression in Expression.values()) {
+                characterMap[expression] = expressionsMap.createSprite("Zach")
+            }
+
+            return characterMap
+
         }
     }
 }
