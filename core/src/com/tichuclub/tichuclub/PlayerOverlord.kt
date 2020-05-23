@@ -112,4 +112,11 @@ class PlayerOverlord {
         return lastTrickWinner
     }
 
+    fun numPlayersThatCalledGrand(aiPlayersOnly: Boolean = false) : Int {
+        var list = getCharactersAsList().filter{it.calledGrand}
+        if(aiPlayersOnly) {
+            list = list.filter{!it.isHuman}
+        }
+        return list.count()
+    }
 }

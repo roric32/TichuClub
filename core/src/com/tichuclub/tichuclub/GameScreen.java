@@ -37,7 +37,7 @@ import static com.badlogic.gdx.Application.ApplicationType.Android;
 public class GameScreen implements Screen {
 
     private boolean debug = true;
-    private int WORLD_HEIGHT = 16;
+    private int WORLD_HEIGHT = 18;
     private float ppu = Gdx.graphics.getHeight() / (float) WORLD_HEIGHT;
     private int WORLD_WIDTH = Gdx.graphics.getWidth() / (int) ppu;
     private Game game;

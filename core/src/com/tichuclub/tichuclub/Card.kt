@@ -26,16 +26,20 @@ abstract class Card(open var suit: Suit, open var value: Int, open var frontImag
 
     abstract var currentSide : Sprite
 
+    var isFaceUp : Boolean = false
+
     fun flip() {
 
         if(currentSide == backImage) {
             frontImage.setSize(currentSide.width, currentSide.height)
             frontImage.setPosition(currentSide.x, currentSide.y)
             currentSide = frontImage
+            isFaceUp = true
         } else {
             backImage.setSize(currentSide.width, currentSide.height)
             backImage.setPosition(currentSide.x, currentSide.y)
             currentSide = backImage
+            isFaceUp = false
         }
 
     }

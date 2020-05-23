@@ -52,11 +52,80 @@ class Deck(preShuffle: Boolean = false, atlas: TextureAtlas) {
 
     }
 
-    /**
-     * Deal 14 cards to each player. x here is the player number.
-     * @param players - PlayerOverlord
-     */
     fun deal(tichu: TichuGame) : Unit {
+
+        var cardMovesCompleted = 0
+
+        val currentHand = tichu.players.south.hand
+
+        val fourthCard = tichu.players.south.hand.first()
+
+        val startX = fourthCard.x - (tichu.FANNED_CARD_WIDTH * 3)
+
+        val cardGrid = MutableList(14){index -> startX + (index * tichu.FANNED_CARD_WIDTH)}
+
+        val duration = 1.0f
+
+        while(cards.size > 0) {
+            for (player in tichu.players.getCharactersAsList()) {
+                val card = cards.first()
+                player.hand.add(card)
+                cards.removeAt(0)
+                player.hand.sortBy { it.value }
+            }
+        }
+
+        for(player in tichu.players.getCharactersAsList()) {
+
+            var x = 0f
+            var y = 0f
+
+            for((index, card) in player.hand.withIndex()) {
+
+                when(player.position) {
+                    Position.NORTH -> {
+                        x = card.x
+                        y = 50f
+                    }
+                    Position.WEST -> {
+                        x = -50f
+                        y = card.y
+                    }
+                    Position.EAST -> {
+                        x = 50f
+                        y = card.y
+                    }
+                    Position.SOUTH -> {
+                        x = cardGrid[index]
+                        y = fourthCard.y
+                    }
+                }
+
+                val moveAction = MoveToAction()
+                moveAction.setPosition(x, y)
+                moveAction.duration = duration
+                val actionChain = SequenceAction(moveAction, (object : RunnableAction() {
+                    override fun run() {
+                        cardMovesCompleted++
+                        if(cardMovesCompleted == 56) {
+                            tichu.state.act()
+                        }
+                    }
+                }))
+                card.addAction(actionChain)
+
+            }
+
+        }
+
+
+    }
+
+    /**
+     * Deal 8 cards to each player.
+     * @param tichu - TichuGame
+     */
+    fun dealEight(tichu: TichuGame) : Unit {
 
         val playerArray = tichu.players.getCharactersAsList()
 

@@ -7,7 +7,8 @@ class StatePass(tichu: TichuGame) : TichuState(tichu) {
     }
 
     override fun act() : Unit {
-
+        tichu.deck.deal(tichu)
+        tichu.state = nextState()
     }
 
 }

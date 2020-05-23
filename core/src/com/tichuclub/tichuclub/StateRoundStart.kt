@@ -1,10 +1,6 @@
 package com.tichuclub.tichuclub
 
-import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.g2d.Sprite
-import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.actions.*
-import com.badlogic.gdx.scenes.scene2d.ui.Image
 
 class StateRoundStart(tichu: TichuGame) : TichuState(tichu) {
 
@@ -22,7 +18,7 @@ class StateRoundStart(tichu: TichuGame) : TichuState(tichu) {
         topCard.addAction(SequenceAction(DelayAction(0.7f), rotateAction, rotateAction))
 
         tichu.shuffleSound.setOnCompletionListener {
-            tichu.deck.deal(tichu)
+            tichu.deck.dealEight(tichu)
             tichu.state = nextState()
         }
         tichu.shuffleSound.play()

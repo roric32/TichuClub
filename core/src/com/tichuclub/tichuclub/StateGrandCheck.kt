@@ -19,6 +19,7 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 class StateGrandCheck(tichu: TichuGame) : TichuState(tichu) {
 
     private val debug = false
+    private val BANNER_DELAY : Float = 3.7f
 
     override fun nextState() : TichuState {
         return StatePass(tichu)
@@ -104,10 +105,21 @@ class StateGrandCheck(tichu: TichuGame) : TichuState(tichu) {
                 Timer.schedule(object : Task() {
                     override fun run() {
                         tichu.eventDispatcher.dispatch(TichuEvent(TichuEvents.GRAND_TICHU_CALL_BY_PLAYER))
-                        tichu.checkForGrandTichu()
-                        tichu.state.nextState()
+                        processAIGrandCalls()
+
+                        var duration = tichu.players.numPlayersThatCalledGrand(true) * BANNER_DELAY
+                        if(duration == 0f) duration = 1f
+
+                        Timer.schedule(object : Task() {
+                            override fun run() {
+                                tichu.state = nextState()
+                                tichu.state.act()
+                            }
+                        }, duration)
                     }
-                }, 3.5f)
+                }, BANNER_DELAY)
+
+
             }
         })
 
@@ -119,9 +131,20 @@ class StateGrandCheck(tichu: TichuGame) : TichuState(tichu) {
                 yesButton.remove()
 
                 tichu.players.south.calledGrand = false
-                tichu.eventDispatcher.dispatch(TichuEvent(TichuEvents.GRAND_TICHU_CALL_SKIPPED_BY_PLAYER))
-                tichu.checkForGrandTichu()
-                tichu.state.nextState()
+                processAIGrandCalls()
+
+                var duration = tichu.players.numPlayersThatCalledGrand(true) * BANNER_DELAY
+
+                //Just to make it feel a little more natural.
+                if(duration == 0f) duration = 1f
+
+                Timer.schedule(object : Task() {
+                    override fun run() {
+                        tichu.state = nextState()
+                        tichu.state.act()
+                    }
+                }, duration)
+
             }
         })
 
@@ -146,4 +169,32 @@ class StateGrandCheck(tichu: TichuGame) : TichuState(tichu) {
 
     }
 
-}
+    fun processAIGrandCalls() {
+
+        val playersWhoWantToCallGrand = tichu.getAIGrandCalls()
+
+        for ((index, player) in playersWhoWantToCallGrand.withIndex()) {
+
+            //They'll play nicely and won't call grand over each other.
+            if (!tichu.players.getCharacterFromPosition(player.partner).calledGrand) {
+
+                player.calledGrand = true
+                val charName: String = player.name
+
+                val duration = index * BANNER_DELAY
+
+                Timer.schedule(object : Task() {
+                    override fun run() {
+                        val useDoubleSound = (tichu.players.numPlayersThatCalledGrand() > 1)
+                        tichu.showTichuAnimation(TichuType.GRAND_TICHU, player, useDoubleSound)
+                    }
+                }, duration)
+
+                val newEvent = TichuEvents.valueOf("GRAND_TICHU_CALL_BY_${charName.toUpperCase()}")
+                tichu.eventDispatcher.dispatch(TichuEvent(newEvent))
+            }
+        }
+
+    }
+
+    }

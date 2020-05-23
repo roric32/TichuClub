@@ -8,6 +8,13 @@ class StateFirstTrick(tichu: TichuGame) : TichuState(tichu) {
 
     override fun act() : Unit {
 
+        for(card in tichu.players.south.hand) {
+            card.toFront()
+            if(!card.isFaceUp) {
+                card.flip()
+            }
+        }
+
     }
 
 }

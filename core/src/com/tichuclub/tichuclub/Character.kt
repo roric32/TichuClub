@@ -157,7 +157,7 @@ class Player(override var characterName : String, override var game: TichuGame) 
 
 class Zach(override var characterName : String, override var game: TichuGame) : Character(characterName, game){
 
-    override val tolerance: Int = 70
+    override val tolerance: Int = 65
     override var expressions: Map<Expression, Sprite> = Config.getCharacterSprites(this)
     override var currentSprite: Sprite = expressions[Expression.NORMAL] ?: throw Exception("Exception: Expression NORMAL not found for character: ${this.characterName}}")
 
