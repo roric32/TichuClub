@@ -18,6 +18,8 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 
 class StateGrandCheck(tichu: TichuGame) : TichuState(tichu) {
 
+    override val name = GameState.GRAND_CHECK
+
     private val debug = false
     private val BANNER_DELAY : Float = 3.7f
 

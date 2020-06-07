@@ -16,7 +16,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.TiledDrawable
 import com.badlogic.gdx.utils.Timer
 import com.badlogic.gdx.utils.Timer.Task
 
-
 enum class TichuType {
     TICHU,
     GRAND_TICHU
@@ -36,7 +35,7 @@ class TichuGame(val WORLD_WIDTH: Int, val WORLD_HEIGHT: Int, stage: Stage, textS
     val doubleTichuSound = Gdx.audio.newMusic(Gdx.files.internal("drums.wav"))
     private var endRound = false
     private var delay : Long = 2_000
-    var deck = Deck(true, atlas)
+    var deck = Deck(true, atlas, this)
     var stage : Stage
     var textStage : Stage
     var state : TichuState = StateGameStart(this)

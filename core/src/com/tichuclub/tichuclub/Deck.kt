@@ -4,31 +4,33 @@ import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.scenes.scene2d.actions.*
 
-class Deck(preShuffle: Boolean = false, atlas: TextureAtlas) {
+class Deck(preShuffle: Boolean = false, atlas: TextureAtlas, tichu: TichuGame) {
 
     private val suits = Suit.values().filter{it.toString() !== "NONE"}
     private val values = intArrayOf(2,3,4,5,6,7,8,9,10,11,12,13,14)
     private val cards = ArrayList<Card>()
     private var backImage = Sprite()
     var atlas = TextureAtlas()
+    var tichu : TichuGame
 
     /**
      * Create the deck.
      */
     init {
         this.atlas = atlas
+        this.tichu = tichu
         for(value in values) {
             for(suit in suits) {
                 val cardName = suit.getAbbreviation(suit) + value.toString()
-                cards.add(NumericCard(suit, value, Sprite(atlas.findRegion(cardName)), Sprite(atlas.findRegion("CardBack"))))
+                cards.add(NumericCard(suit, value, Sprite(atlas.findRegion(cardName)), Sprite(atlas.findRegion("CardBack")), tichu))
             }
         }
 
         //Setup the special cards.
-        cards.add(SpecialCard(Suit.NONE, 0, Sprite(atlas.findRegion("DOG")), Sprite(atlas.findRegion("CardBack")), "DOG"))
-        cards.add(SpecialCard(Suit.NONE, 15, Sprite(atlas.findRegion("PHOENIX")), Sprite(atlas.findRegion("CardBack")), "PHOENIX"))
-        cards.add(SpecialCard(Suit.NONE, 16, Sprite(atlas.findRegion("DRAGON")), Sprite(atlas.findRegion("CardBack")), "DRAGON"))
-        cards.add(SpecialCard(Suit.NONE, 1, Sprite(atlas.findRegion("SPARROW")), Sprite(atlas.findRegion("CardBack")), "SPARROW"))
+        cards.add(SpecialCard(Suit.NONE, 0, Sprite(atlas.findRegion("DOG")), Sprite(atlas.findRegion("CardBack")), tichu, "DOG"))
+        cards.add(SpecialCard(Suit.NONE, 15, Sprite(atlas.findRegion("PHOENIX")), Sprite(atlas.findRegion("CardBack")), tichu, "PHOENIX"))
+        cards.add(SpecialCard(Suit.NONE, 16, Sprite(atlas.findRegion("DRAGON")), Sprite(atlas.findRegion("CardBack")), tichu, "DRAGON"))
+        cards.add(SpecialCard(Suit.NONE, 1, Sprite(atlas.findRegion("SPARROW")), Sprite(atlas.findRegion("CardBack")), tichu, "SPARROW"))
 
         if(preShuffle) {
             shuffle()
@@ -38,11 +40,11 @@ class Deck(preShuffle: Boolean = false, atlas: TextureAtlas) {
     /**
      * Shuffle the cards.
      */
-    fun shuffle() : Unit {
+    fun shuffle() {
         cards.shuffle()
     }
 
-    fun readyDeck(tichu: TichuGame) {
+    fun readyDeck() {
 
         for(card: Card in cards) {
             card.setPosition((tichu.WORLD_WIDTH/2f) - (tichu.CARD_WIDTH * .5f), (tichu.WORLD_HEIGHT/2f) - (tichu.CARD_HEIGHT * .5f))
@@ -52,7 +54,7 @@ class Deck(preShuffle: Boolean = false, atlas: TextureAtlas) {
 
     }
 
-    fun deal(tichu: TichuGame) : Unit {
+    fun deal() {
 
         var cardMovesCompleted = 0
 
@@ -125,7 +127,7 @@ class Deck(preShuffle: Boolean = false, atlas: TextureAtlas) {
      * Deal 8 cards to each player.
      * @param tichu - TichuGame
      */
-    fun dealEight(tichu: TichuGame) : Unit {
+    fun dealEight() {
 
         val playerArray = tichu.players.getCharactersAsList()
 
@@ -212,11 +214,11 @@ class Deck(preShuffle: Boolean = false, atlas: TextureAtlas) {
 
     fun createNumericCard(suit: Suit, value: Int) : NumericCard {
         val suitFirstLetter = suit.name.toUpperCase().substring(0,1)
-        return NumericCard(suit, value, Sprite(atlas.findRegion(suitFirstLetter + value.toString())), backImage)
+        return NumericCard(suit, value, Sprite(atlas.findRegion(suitFirstLetter + value.toString())), backImage, tichu)
     }
 
     fun createSpecialCard(suit: Suit, value: Int, name: String) : SpecialCard {
-        return SpecialCard(suit, value, Sprite(atlas.findRegion(name)), backImage, name)
+        return SpecialCard(suit, value, Sprite(atlas.findRegion(name)), backImage, tichu, name)
     }
 
 }
