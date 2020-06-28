@@ -10,6 +10,7 @@ class Deck(preShuffle: Boolean = false, atlas: TextureAtlas, tichu: TichuGame) {
     private val values = intArrayOf(2,3,4,5,6,7,8,9,10,11,12,13,14)
     private val cards = ArrayList<Card>()
     private var backImage = Sprite()
+    lateinit var cardGrid : List<Float>
     var atlas = TextureAtlas()
     var tichu : TichuGame
 
@@ -64,7 +65,8 @@ class Deck(preShuffle: Boolean = false, atlas: TextureAtlas, tichu: TichuGame) {
 
         val startX = fourthCard.x - (tichu.FANNED_CARD_WIDTH * 3)
 
-        val cardGrid = MutableList(14){index -> startX + (index * tichu.FANNED_CARD_WIDTH)}
+        //Later, after the pass, we'll come back to this value and use it to re-calculate the grid so it's the same.
+        this.cardGrid = MutableList(14){index -> startX + (index * tichu.FANNED_CARD_WIDTH)}
 
         val duration = 1.0f
 

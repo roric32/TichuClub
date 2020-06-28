@@ -64,8 +64,11 @@ class StatePass(tichu: TichuGame) : TichuState(tichu) {
                     slotPositions[Position.WEST] = Pair(leftCardX, 4f)
 
                     leftImage.setPosition(leftCardX, 4f)
+                    leftImage.name = "leftSlot"
                     middleImage.setPosition(middleCardX, 5f)
+                    middleImage.name = "middleSlot"
                     rightImage.setPosition(rightCardX, 4f)
+                    rightImage.name = "rightSlot"
                     tichu.stage.addActor(leftImage)
                     tichu.stage.addActor(middleImage)
                     tichu.stage.addActor(rightImage)
@@ -125,8 +128,8 @@ class StatePass(tichu: TichuGame) : TichuState(tichu) {
         tichu.players.getAICharacters().map{it.evaluatePass(it.hand)}
         for(character in tichu.players.getCharactersAsList()) {
             for(card in character.pendingPassCards) {
-                val x = tichu.players.getCharacterFromPosition(card.key).pendingPassCards.get(character.position)!!.x
-                val y = tichu.players.getCharacterFromPosition(card.key).pendingPassCards.get(character.position)!!.y
+                val x = tichu.players.getCharacterFromPosition(card.key).pendingPassCards[character.position]!!.x
+                val y = tichu.players.getCharacterFromPosition(card.key).pendingPassCards[character.position]!!.y
                 card.value.nextCoordinates = Pair(x, y)
                 character.hand.remove(card.value)
                 tichu.players.getCharacterFromPosition(card.key).passedCards.add(card.value)
@@ -142,12 +145,40 @@ class StatePass(tichu: TichuGame) : TichuState(tichu) {
                         if(!card.isFaceUp) {
                             card.flip()
                         }
+                        character.hand.add(card)
+                        if(!character.isHuman) {
+                            character.passedCards.remove(card)
+                        }
                     }
                 })
                 card.chainActions(moveAction, flipAction)
             }
         }
 
+        for(card in tichu.players.south.passedCards) {
+            card.addListener(object: ClickListener() {
+                override fun clicked(event: InputEvent, x: Float, y: Float) {
+                    if(tichu.players.south.passedCards.count() > 0) {
+                        val passState = tichu.state as StatePass
+                        passState.collectPassedCards()
+                    }
+                }
+            })
+        }
+
     }
 
+    fun collectPassedCards() {
+
+        tichu.stage.actors.filter{it.name.contains("leftSlot")
+                .or(it.name.contains("rightSlot"))
+                .or(it.name.contains("middleSlot"))}.all { it.remove() }
+
+        for((index, card) in tichu.players.south.hand.sortedBy{it.value}.withIndex()) {
+            card.nextCoordinates = Pair(tichu.deck.cardGrid[index], 0f)
+            card.moveTo(card.nextCoordinates.first, card.nextCoordinates.second, 1f)
+            card.zIndex = index
+        }
+
+    }
 }
