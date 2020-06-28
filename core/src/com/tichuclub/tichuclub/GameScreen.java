@@ -3,6 +3,7 @@ package com.tichuclub.tichuclub;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Camera;
@@ -101,7 +102,6 @@ public class GameScreen implements Screen {
         backgroundStage.addActor(rootTable);
 
         Gdx.input.setCatchBackKey(true);
-        Gdx.input.setInputProcessor(stage);
 
         this.atlas = new TextureAtlas(Gdx.files.internal(cardAtlasFile));
 
@@ -121,7 +121,7 @@ public class GameScreen implements Screen {
     }
 
     public void show() {
-        Gdx.input.setInputProcessor(this.stage);
+        Gdx.input.setInputProcessor(new InputMultiplexer(this.stage, this.textStage));
     }
 
     public void render(float delta) {

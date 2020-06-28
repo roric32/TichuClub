@@ -29,6 +29,8 @@ abstract class Character(open val characterName: String, open var game: TichuGam
     open val isHuman = false
     var isOut = false
     var hand = ArrayList<Card>()
+    var pendingPassCards = HashMap<Position, Card>()
+
     var passedCards = ArrayList<Card>()
     val cardsWon = ArrayList<Card>()
 
@@ -67,8 +69,10 @@ abstract class Character(open val characterName: String, open var game: TichuGam
         return if(type == null) ca.getCombinations(hand).getAll() else ca.getCombinations(hand).get(type).filter{ it.getValue() > lastValue!! }
     }
 
-    open fun evaluatePass(hand: ArrayList<Card>) : List<Card> {
-        return listOf(hand[0], hand[13], hand[1])
+    open fun evaluatePass(hand: ArrayList<Card>) {
+        this.pendingPassCards[leftOpponent] = hand[0]
+        this.pendingPassCards[partner] = hand[13]
+        this.pendingPassCards[rightOpponent] = hand[1]
     }
 
     open fun speak(dialog: String) {
@@ -170,10 +174,8 @@ class Zach(override var characterName : String, override var game: TichuGame) : 
         super.speak(dialog)
     }
 
-    override fun evaluatePass(hand: ArrayList<Card>) : List<Card> {
-        val analysis = super.getAnalysis(hand)
-        return listOf(hand[0], hand[13], hand[1])
-        //TODO: analyze pass
+    override fun evaluatePass(hand: ArrayList<Card>) {
+        super.evaluatePass(hand)
     }
 
 }
@@ -194,11 +196,6 @@ class Thong(override var characterName : String, override var game: TichuGame) :
         super.speak(dialog)
     }
 
-    override fun evaluatePass(hand: ArrayList<Card>) : List<Card> {
-        val analysis = super.getAnalysis(hand)
-        return listOf(hand[0], hand[13], hand[1])
-        //TODO: analyze pass
-    }
 
 }
 
@@ -232,12 +229,6 @@ class Nate(override var characterName : String, override var game: TichuGame) : 
 
     override fun speak(dialog: String) {
         super.speak(dialog)
-    }
-
-    override fun evaluatePass(hand: ArrayList<Card>) : List<Card> {
-        val analysis = super.getAnalysis(hand)
-        return listOf(hand[0], hand[13], hand[1])
-        //TODO: analyze pass
     }
 
 }

@@ -143,6 +143,7 @@ class TichuGame(val WORLD_WIDTH: Int, val WORLD_HEIGHT: Int, stage: Stage, textS
 
     }
 
+    /*
     private fun pass() {
 
         var playerHand = players.getCharacterFromPosition(Position.SOUTH).hand
@@ -212,6 +213,7 @@ class TichuGame(val WORLD_WIDTH: Int, val WORLD_HEIGHT: Int, stage: Stage, textS
 
     }
 
+*/
     /**
      * Ask who has the bird, basically.
      */

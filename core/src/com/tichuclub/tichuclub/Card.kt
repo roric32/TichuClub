@@ -2,10 +2,14 @@ package com.tichuclub.tichuclub
 
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.Sprite
+import com.badlogic.gdx.scenes.scene2d.Action
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction
+import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction
+import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane
 
 enum class Suit {
     SWORDS, STARS, EMERALDS, PAGODAS, NONE;
@@ -26,8 +30,12 @@ abstract class Card(open var suit: Suit, open var value: Int, open var frontImag
 
     abstract var currentSide : Sprite
 
+    var lastZIndex: Int = this.zIndex
+    var lastCoordinates = Pair(0f, 0f)
+    var nextCoordinates = Pair(0f, 0f)
     var isFaceUp : Boolean = false
     var isSelected : Boolean = false
+    var passPosition: Position? = null
 
     private val SLIDE_AMOUNT : Float = 1f
 
@@ -54,7 +62,7 @@ abstract class Card(open var suit: Suit, open var value: Int, open var frontImag
             GameState.ROUND_START -> {}
             GameState.GRAND_CHECK -> {}
             GameState.PASS -> {
-                toggleSelect()
+                togglePassSelect()
             }
             GameState.FIRST_TRICK -> {
             }
@@ -85,6 +93,71 @@ abstract class Card(open var suit: Suit, open var value: Int, open var frontImag
 
     fun toggleSelect() {
         if(isSelected) deselect() else select()
+    }
+
+    fun togglePassSelect() {
+        if(passPosition == null) {
+
+            //Set the current card coordinates here in case we need to send the card back here after moving it.
+            this.lastCoordinates = Pair(this.x, this.y)
+
+            var targetPosition: Position? = null
+            //Priority goes W, N, E.
+            for(position in Position.values().filter{ it !== Position.SOUTH}) {
+                if(!tichu.players.south.pendingPassCards.containsKey(position)) {
+                    targetPosition = position
+                    break
+                }
+            }
+
+            if(targetPosition !== null) {
+                passPosition = targetPosition
+                tichu.players.south.pendingPassCards[targetPosition] = this
+                lastZIndex = this.zIndex
+
+                val passState = tichu.state as StatePass
+                val moveAction = moveTo(passState.slotPositions[targetPosition]!!.first, passState.slotPositions[targetPosition]!!.second, 0.3f, true)
+                val afterMove = (object : RunnableAction() {
+                    override fun run() {
+                        if(tichu.players.south.pendingPassCards.count() == 3) {
+                            val state = tichu.state as StatePass
+                            state.togglePassButton()
+                        }
+                    }
+                })
+                chainActions(moveAction, afterMove)
+            }
+
+        } else {
+            val passState = tichu.state as StatePass
+            passState.togglePassButton(false)
+            moveTo(lastCoordinates.first, lastCoordinates.second, 0.3f)
+            this.zIndex = lastZIndex
+            tichu.players.south.pendingPassCards.remove(passPosition!!)
+            passPosition = null
+        }
+    }
+
+    open fun moveTo(x: Float, y: Float, duration: Float) {
+        val moveAction = MoveToAction()
+        moveAction.setPosition(x, y)
+        moveAction.duration = duration
+        this.addAction(moveAction)
+    }
+
+    open fun moveTo(x: Float, y: Float, duration: Float, returnAction: Boolean = true) : MoveToAction {
+        val moveAction = MoveToAction()
+        moveAction.setPosition(x, y)
+        moveAction.duration = duration
+        return moveAction
+    }
+
+    open fun chainActions(vararg actions: Action) {
+        val sequence = SequenceAction()
+        for(action in actions) {
+            sequence.addAction(action)
+        }
+        this.addAction(sequence)
     }
 
 }

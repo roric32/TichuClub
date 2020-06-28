@@ -23,7 +23,7 @@ class PlayerOverlord {
                 east.position = position
                 east.partner = Position.WEST
                 east.leftOpponent = Position.SOUTH
-                east.rightOpponent = Position.EAST
+                east.rightOpponent = Position.NORTH
             }
             Position.SOUTH -> {
                 south = character

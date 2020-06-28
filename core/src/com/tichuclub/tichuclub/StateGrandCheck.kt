@@ -167,7 +167,6 @@ class StateGrandCheck(tichu: TichuGame) : TichuState(tichu) {
         rootTable.debug = debug
 
         tichu.textStage.addActor(rootTable)
-        Gdx.input.inputProcessor = tichu.textStage
 
     }
 
