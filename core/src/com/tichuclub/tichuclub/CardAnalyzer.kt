@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 
-class CardAnalyzer(private var deck: Deck) {
+class CardAnalyzer(private var tichu: TichuGame) {
 
     fun getCombinations(hand: List<Card>) : CardAnalysis {
 
@@ -322,7 +322,7 @@ class CardAnalyzer(private var deck: Deck) {
 
                 when(difference) {
                     2 -> if(sortedHand.filter({ it.value == 15}).count() > 0 && potentialStraight.filter({ it.value == 15 }).count() < 1) {
-                        potentialStraight.add(deck.createSpecialCard(Suit.NONE, 15, "PHOENIX"))
+                        potentialStraight.add(tichu.players.searchHandsForCard("PHOENIX")!!)
                         potentialStraight.add(nextCard)
                     }
                     1 -> potentialStraight.add(nextCard)

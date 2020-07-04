@@ -50,6 +50,8 @@ class TichuGame(val WORLD_WIDTH: Int, val WORLD_HEIGHT: Int, stage: Stage, textS
     val bannerImage = Image(bannerTile)
 
     lateinit var players: PlayerOverlord
+    lateinit var analyzer: CardAnalyzer
+
     val WIDTH_UNITS : Float = (Gdx.graphics.width/WORLD_WIDTH).toFloat()
     val HEIGHT_UNITS : Float = (Gdx.graphics.height/WORLD_HEIGHT).toFloat()
 
@@ -69,6 +71,7 @@ class TichuGame(val WORLD_WIDTH: Int, val WORLD_HEIGHT: Int, stage: Stage, textS
     fun setUp(players: PlayerOverlord) {
 
         this.players = players
+        this.analyzer = CardAnalyzer(this)
 
         val style = Label.LabelStyle(Config.getFont(12, 1, Color.BLACK, "truetypefont/Amble-Regular.ttf"), Color.BLACK)
         style.background = this.speechBubbleTexture
@@ -214,60 +217,7 @@ class TichuGame(val WORLD_WIDTH: Int, val WORLD_HEIGHT: Int, stage: Stage, textS
     }
 
 */
-    /**
-     * Ask who has the bird, basically.
-     */
-    private fun whoHasTheBird() : Character {
-
-        var startPlayer = players.getCharacterFromPosition(Position.SOUTH)
-
-        for(character in players.getAICharacters()) {
-            if(character.hand.filter({ it.value == 1 }).count() > 0) {
-                val event = TichuEvents.valueOf("${character.name.toUpperCase()}_HAS_SPARROW")
-                eventDispatcher.dispatch(TichuEvent(event))
-                startPlayer = character
-            }
-        }
-
-        return startPlayer
-
-    }
-
-    private fun firstTrick() {
-
-        val startPlayer = whoHasTheBird()
-        val firstCombo : CardCombination
-
-        if(startPlayer.isHuman) {
-            print("\nThis is your hand: \n ${startPlayer.hand.sortedWith(compareBy({it.value}))}\n")
-
-            firstCombo = humanPlaysFirst(startPlayer.hand)
-            startPlayer.removeCardsFromHand(firstCombo)
-
-        } else {
-
-            if(!startPlayer.calledGrand) {
-                val willCall = startPlayer.wantsToCall(false)
-                if(willCall) {
-                    startPlayer.calledTichu = true
-                    eventDispatcher.dispatch(TichuEvent(TichuEvents.valueOf("TICHU_CALL_BY_${startPlayer.name.toUpperCase()}")))
-                    eventDispatcher.dispatch(TichuEvent(TichuEvents.REACT_TO_CALL_BY_PARTNER, players.getCharacterFromPosition(startPlayer.partner)))
-                }
-            }
-
-            firstCombo = startPlayer.playFirst(true)
-
-        }
-
-        val trick = Trick()
-        trick.playNext(startPlayer, firstCombo)
-        print("\n${startPlayer.name} has played: ${firstCombo.cards}\n")
-        Thread.sleep(delay)
-
-        playTrick(trick)
-
-    }
-
+    /*
     private fun playTrick(startingTrick: Trick? = null) {
 
         var trick = Trick()
@@ -331,6 +281,7 @@ class TichuGame(val WORLD_WIDTH: Int, val WORLD_HEIGHT: Int, stage: Stage, textS
         Thread.sleep(delay)
 
     }
+     */
 
     /**
      * TODO: ALL THIS
@@ -355,7 +306,7 @@ class TichuGame(val WORLD_WIDTH: Int, val WORLD_HEIGHT: Int, stage: Stage, textS
         val totalCards = hand.size
         var answer: String
         val cards = ArrayList<Card>()
-        val ca = CardAnalyzer(deck)
+        val ca = CardAnalyzer(this)
         val analysis: CardAnalysis = ca.getCombinations(hand)
         var combination: CardCombination? = null
         var foundCombination = false
@@ -415,7 +366,7 @@ class TichuGame(val WORLD_WIDTH: Int, val WORLD_HEIGHT: Int, stage: Stage, textS
         var x: Int
         var answer: String
         val cards = ArrayList<Card>()
-        val ca = CardAnalyzer(deck)
+        val ca = CardAnalyzer(this)
         val analysis: CardAnalysis = ca.getCombinations(hand)
         var combination: CardCombination? = null
         var foundCombination = false

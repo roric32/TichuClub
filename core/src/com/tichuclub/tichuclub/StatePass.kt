@@ -3,9 +3,11 @@ package com.tichuclub.tichuclub
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.scenes.scene2d.Action
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction
+import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction
 import com.badlogic.gdx.scenes.scene2d.ui.Button
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
@@ -20,6 +22,12 @@ class StatePass(tichu: TichuGame) : TichuState(tichu) {
     lateinit var middleImage : Image
     lateinit var rightImage : Image
     lateinit var passButton : Button
+    val clickListener = object: ClickListener() {
+        override fun clicked(event: InputEvent, x: Float, y: Float) {
+            togglePassButton(false)
+            passCards()
+        }
+    }
 
     override val name = GameState.PASS
 
@@ -93,12 +101,7 @@ class StatePass(tichu: TichuGame) : TichuState(tichu) {
                     passButton.name = "passButton"
                     passButton.isVisible = false
 
-                    passButton.addListener(object: ClickListener() {
-                        override fun clicked(event: InputEvent, x: Float, y: Float) {
-                            togglePassButton(false)
-                            passCards()
-                        }
-                    })
+                    passButton.addListener(clickListener)
 
                     tichu.textStage.addActor(passButton)
                 }
@@ -125,6 +128,7 @@ class StatePass(tichu: TichuGame) : TichuState(tichu) {
     }
 
     fun passCards() {
+        tichu.players.south.hand.map{it.touchable = Touchable.disabled}
         tichu.players.getAICharacters().map{it.evaluatePass(it.hand)}
         for(character in tichu.players.getCharactersAsList()) {
             for(card in character.pendingPassCards) {
@@ -158,9 +162,11 @@ class StatePass(tichu: TichuGame) : TichuState(tichu) {
         for(card in tichu.players.south.passedCards) {
             card.addListener(object: ClickListener() {
                 override fun clicked(event: InputEvent, x: Float, y: Float) {
-                    if(tichu.players.south.passedCards.count() > 0) {
-                        val passState = tichu.state as StatePass
-                        passState.collectPassedCards()
+                    if(tichu.state.name == GameState.PASS) {
+                        if (tichu.players.south.passedCards.count() > 0) {
+                            val passState = tichu.state as StatePass
+                            passState.collectPassedCards()
+                        }
                     }
                 }
             })
@@ -179,6 +185,14 @@ class StatePass(tichu: TichuGame) : TichuState(tichu) {
             card.moveTo(card.nextCoordinates.first, card.nextCoordinates.second, 1f)
             card.zIndex = index
         }
-
+        Timer.schedule(object : Timer.Task() {
+            override fun run() {
+                for(card in tichu.players.south.hand) {
+                    card.removeListener(clickListener)
+                }
+                tichu.state = nextState()
+                tichu.state.act()
+            }
+        }, 2.5f)
     }
 }

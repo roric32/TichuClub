@@ -65,8 +65,16 @@ abstract class Character(open val characterName: String, open var game: TichuGam
     }
 
     fun getValidCombinations(type: Combination?, lastValue: Int?) : List<CardCombination> {
-        val ca = CardAnalyzer(game.deck)
+        val ca = CardAnalyzer(game)
         return if(type == null) ca.getCombinations(hand).getAll() else ca.getCombinations(hand).get(type).filter{ it.getValue() > lastValue!! }
+    }
+
+    fun getValidCombinations(type: Combination?, lastValue: Int?, numCards: Int) : List<CardCombination> {
+        val ca = CardAnalyzer(game)
+        return when(type) {
+            null -> ca.getCombinations(hand).getAll()
+            else -> ca.getCombinations(hand).get(type).filter{ it.getValue() > lastValue!! && it.cards.count() == numCards}
+        }
     }
 
     open fun evaluatePass(hand: ArrayList<Card>) {
@@ -80,7 +88,7 @@ abstract class Character(open val characterName: String, open var game: TichuGam
     }
 
     open fun getAnalysis(hand: ArrayList<Card>) : CardAnalysis {
-        val ca = CardAnalyzer(game.deck)
+        val ca = CardAnalyzer(game)
         return ca.getCombinations(hand)
     }
 
@@ -95,11 +103,11 @@ abstract class Character(open val characterName: String, open var game: TichuGam
 
     }
 
-    open fun play(type: Combination, lastValue: Int) : CardCombination? {
+    open fun play(type: Combination, lastValue: Int, numCards: Int) : CardCombination? {
 
         var ret : CardCombination? = null
 
-        val validPlays : List<CardCombination> = getValidCombinations(type, lastValue)
+        val validPlays : List<CardCombination> = getValidCombinations(type, lastValue, numCards)
 
         //TODO: Actually do logic here
         if(validPlays.isNotEmpty()) {

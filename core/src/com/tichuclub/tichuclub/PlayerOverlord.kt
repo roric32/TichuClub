@@ -119,4 +119,18 @@ class PlayerOverlord {
         }
         return list.count()
     }
+
+    fun searchHandsForCard(cardName: String) : Card? {
+        var returnCard : Card? = null
+        for(position in Position.values()) {
+            for(card in getCharacterFromPosition(position).hand) {
+                if (card.name == cardName) {
+                    returnCard = card
+                    break
+                }
+            }
+        }
+        return returnCard
+    }
+
 }

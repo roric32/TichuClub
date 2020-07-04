@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.Action
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Touchable
+import com.badlogic.gdx.scenes.scene2d.actions.DelayAction
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction
 import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction
@@ -150,6 +151,12 @@ abstract class Card(open var suit: Suit, open var value: Int, open var frontImag
         moveAction.setPosition(x, y)
         moveAction.duration = duration
         return moveAction
+    }
+
+    open fun moveWithDelayAfterward(x: Float, y: Float, moveDuration: Float, delay: Float) {
+        val moveAction = moveTo(x, y, moveDuration, true)
+        val delayAction = DelayAction(delay)
+        chainActions(delayAction, moveAction)
     }
 
     open fun chainActions(vararg actions: Action) {
